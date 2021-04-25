@@ -66,7 +66,7 @@ public class Edit {
     @PatchMapping(path = "/password")
     public Map<String, Object> _password(@CookieValue String token, @RequestBody EditPasswdDTO info) {
         Map<String, Object> res = new HashMap<>();
-        try{
+        try {
             String id_user = JwtUtil.parseToken(token);
 
             Connection conn = MySQLConnector.getConnection();
@@ -74,7 +74,7 @@ public class Edit {
             check.setInt(1, Integer.parseInt(id_user));
             ResultSet rs_check = check.executeQuery();
 
-            if (rs_check.next()){
+            if (rs_check.next()) {
                 PreparedStatement psmt = conn.prepareStatement("UPDATE user SET passwd = ? WHERE id_user = ?");
                 psmt.setString(1, info.getNewPassword());
                 psmt.setInt(2, Integer.parseInt(id_user));
@@ -85,7 +85,7 @@ public class Edit {
             }
             res.put("success", false);
             res.put("text1", "There are no user ID obtained :(");
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
             res.put("success", false);
             res.put("text", "Something wrong :(");

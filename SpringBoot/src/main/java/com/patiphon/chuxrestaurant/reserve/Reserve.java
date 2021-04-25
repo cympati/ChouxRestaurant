@@ -1,5 +1,7 @@
 package com.patiphon.chuxrestaurant.reserve;
 
+import com.patiphon.chuxrestaurant.DTO.AddReserveDTO;
+import com.patiphon.chuxrestaurant.DTO.ApproveDTO;
 import com.patiphon.chuxrestaurant.DTO.EditReserveDTO;
 import com.patiphon.chuxrestaurant.database.MySQLConnector;
 import com.patiphon.chuxrestaurant.utils.JwtUtil;
@@ -16,22 +18,22 @@ import java.util.Map;
 @RequestMapping("/reserve")
 public class Reserve {
     @PostMapping(path = "/add")
-    public Map<String, Object> _add(@CookieValue String token, @RequestParam long date_time, @RequestParam int size, @RequestParam String req) {
+    public Map<String, Object> _add(@CookieValue String token, @RequestBody AddReserveDTO info) {
         Map<String, Object> res = new HashMap<>();
         try {
             String id_user = JwtUtil.parseToken(token);
 
             Connection conn = MySQLConnector.getConnection();
             PreparedStatement psmt_table = conn.prepareStatement("SELECT id_table FROM table_typ WHERE min <= ? AND max >= ?");
-            psmt_table.setInt(1, size);
-            psmt_table.setInt(2, size);
+            psmt_table.setInt(1, info.getSize());
+            psmt_table.setInt(2, info.getSize());
             ResultSet rs_table = psmt_table.executeQuery();
 
             while (rs_table.next()) {
                 // check step 1
                 DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                Date date1 = new Date(date_time);
-                Date date2 = new Date(date_time - 7200000);
+                Date date1 = new Date(info.getDate_time());
+                Date date2 = new Date(info.getDate_time() - 7200000);
 
 
                 PreparedStatement psmt_rsv1 = conn.prepareStatement("SELECT id_table, id_rsv FROM table_rsv WHERE dt_start <= ? AND dt_start >= ? AND id_table = ?");
@@ -54,10 +56,10 @@ public class Reserve {
                 }
                 if (ok == true) {
                     PreparedStatement psmt_add_rsv = conn.prepareStatement("INSERT INTO reservation (special_req, id_user, id_table, size) VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-                    psmt_add_rsv.setString(1, req);
+                    psmt_add_rsv.setString(1, info.getReq());
                     psmt_add_rsv.setInt(2, Integer.parseInt(id_user));
                     psmt_add_rsv.setInt(3, rs_table.getInt("id_table"));
-                    psmt_add_rsv.setInt(4, size);
+                    psmt_add_rsv.setInt(4, info.getSize());
                     psmt_add_rsv.execute();
 
                     ResultSet generatedKeysRsv = psmt_add_rsv.getGeneratedKeys();
@@ -91,26 +93,37 @@ public class Reserve {
 
 
     @PatchMapping(path = "/approve")
-    public Map<String, Object> _cancel(@CookieValue String token, @RequestParam int id_rsv) {
+    public Map<String, Object> _cancel(@CookieValue String token, @RequestBody ApproveDTO info) {
         // ถ้าปุ่มคอมพลีทให้เปลี่ยนสเตตัสโนเป็นเลขหนึ่ง
         // ถ้าปุ่มแคนเซิลให้เปลี่ยนสเตตัสโนเป็นเลขสอง
         // รับสเตตัสโนมาเช็ค 1 , 2
         Map<String, Object> res = new HashMap<>();
         try {
             String id_user = JwtUtil.parseToken(token);
-
             Connection conn = MySQLConnector.getConnection();
-            PreparedStatement psmt = conn.prepareStatement("UPDATE reservation SET status_rsv = 'cancel' " +
-                    "WHERE id_user = ? AND id_rsv = ?");
-            psmt.setInt(1, Integer.parseInt(id_user));
-            psmt.setInt(2, id_rsv);
-            int ok = psmt.executeUpdate();
+            int ok = 0;
 
+            if (info.getStatus() == 1) { // Complete
+                PreparedStatement psmt_cp = conn.prepareStatement("UPDATE reservation SET status_rsv = 'complete' " +
+                        "WHERE id_user = ? AND id_rsv = ?");
+                psmt_cp.setInt(1, Integer.parseInt(id_user));
+                psmt_cp.setInt(2, info.getId_rsv());
+                ok = psmt_cp.executeUpdate();
+            } else if (info.getStatus() == 2){ // Cancel
+                PreparedStatement psmt_cc = conn.prepareStatement("UPDATE reservation SET status_rsv = 'cancel' " +
+                        "WHERE id_user = ? AND id_rsv = ?");
+                psmt_cc.setInt(1, Integer.parseInt(id_user));
+                psmt_cc.setInt(2, info.getId_rsv());
+                ok = psmt_cc.executeUpdate();
+            }
+
+            // Check it execute or not
             if (ok >= 1) {
                 res.put("success", true);
-                res.put("text", "Your reservation is cancelled :)");
+                res.put("text", "Your reservation is completed :)");
                 return res;
             }
+
             res.put("success", false);
             res.put("text1", "There are no this reservation ID obtained in your history :(");
 

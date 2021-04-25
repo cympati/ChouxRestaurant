@@ -2,11 +2,13 @@ package com.patiphon.chuxrestaurant.account;
 
 import com.patiphon.chuxrestaurant.database.MySQLConnector;
 import com.patiphon.chuxrestaurant.utils.JwtUtil;
+import io.jsonwebtoken.JwtException;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,7 +48,10 @@ public class LoadData {
             } else {
                 res.put("loginStatus", false);
             }
-
+        } catch (JwtException e) {
+            e.printStackTrace();
+            res.put("success", false);
+            res.put("text", "Token is incorrect :(");
         } catch (Exception e) {
             res.put("success", false);
             e.printStackTrace();
