@@ -1,0 +1,56 @@
+package com.patiphon.chuxrestaurant.account;
+
+import com.patiphon.chuxrestaurant.database.MySQLConnector;
+import com.patiphon.chuxrestaurant.utils.JwtUtil;
+import org.springframework.web.bind.annotation.*;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.HashMap;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/auth")
+public class LoadData {
+    @PostMapping(path = "/load")
+    public Map<String, Object> _load(@RequestParam String token) {
+        Map<String, Object> res = new HashMap<>();
+        try {
+            String id_user = JwtUtil.parseToken(token);
+
+            Connection connection = MySQLConnector.getConnection();
+            PreparedStatement pstm = connection.prepareStatement("SELECT * FROM user WHERE id_user = ?");
+            pstm.setString(1, id_user);
+            ResultSet rs = pstm.executeQuery();
+
+            if (rs.next()) {
+                Map<String, Object> userDetail = new HashMap<>();
+                Map<String, Object> bgColor = new HashMap<>();
+
+                userDetail.put("id", rs.getInt("id_user"));
+                userDetail.put("firstname", rs.getString("first_name"));
+                userDetail.put("lastname", rs.getString("last_name"));
+                userDetail.put("phoneNumber", rs.getString("phone_no"));
+                userDetail.put("email", rs.getString("email"));
+                userDetail.put("isAdmin", rs.getBoolean("isAdmin"));
+
+                bgColor.put("color", rs.getString("bg_color"));
+                bgColor.put("value", rs.getString("bg_color").toLowerCase());
+
+                res.put("getRmd", rs.getBoolean("getReminders"));
+                res.put("bgColor", bgColor);
+                res.put("loginStatus", true);
+                res.put("userDetail", userDetail);
+
+            } else {
+                res.put("loginStatus", false);
+            }
+
+        } catch (Exception e) {
+            res.put("success", false);
+            e.printStackTrace();
+        }
+        return res;
+    }
+}
