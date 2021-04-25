@@ -1,0 +1,13 @@
+// register({ dispatch }, newUserForm) {
+    //   axios
+    //     .post("http://localhost:8081/auth/register", qs.stringify(newUserForm))
+    //     .then(
+    //       (response) => {
+    //         if (response.data.loginStatus) {
+    //         } else {
+    //           console.log("Register Wrong :(");
+    //         }
+    //       },
+    //       (error) => console.error("Register Wrong :(", error)
+    //     );
+    // },
