@@ -28,7 +28,7 @@ public class JwtUtil {
     }
 
     public static String parseToken(String jws) throws JwtException {
-        // ก่อนเวลาปัจจุบันไหม
+        // Check expiration
         if (Jwts.parserBuilder().setSigningKey(KEY).build().parseClaimsJws(jws).getBody().getExpiration().before(new Date()))
             throw new JwtException(jws); // สร้างerror
         return Jwts.parserBuilder().setSigningKey(KEY).build().parseClaimsJws(jws).getBody().getSubject();

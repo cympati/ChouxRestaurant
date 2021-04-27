@@ -16,7 +16,7 @@ import java.util.Map;
 @RequestMapping("/auth")
 public class LoadData {
     @PostMapping(path = "/load")
-    public Map<String, Object> _load(@RequestParam String token) {
+    public Map<String, Object> _load(@CookieValue String token) {
         Map<String, Object> res = new HashMap<>();
         try {
             String id_user = JwtUtil.parseToken(token);
@@ -42,11 +42,10 @@ public class LoadData {
 
                 res.put("getRmd", rs.getBoolean("getReminders"));
                 res.put("bgColor", bgColor);
-                res.put("loginStatus", true);
+                res.put("isLogin", true);
                 res.put("userDetail", userDetail);
-
             } else {
-                res.put("loginStatus", false);
+                res.put("isLogin", false);
             }
         } catch (JwtException e) {
             e.printStackTrace();

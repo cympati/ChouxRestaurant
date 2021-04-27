@@ -29,9 +29,9 @@ public class Register {
             pstm.setString(5, newUser.getPasswd());
             pstm.setBoolean(6, newUser.getGetRmd());
             pstm.execute();
-            res.put("loginStatus", true);
+            res.put("isLogin", true);
         } catch (Exception e) {
-            res.put("loginStatus", false);
+            res.put("isLogin", false);
             if (e instanceof SQLIntegrityConstraintViolationException) {
                 if (e.getMessage().contains("user_phone_no_uindex")) {
                     res.put("text", "This phone number is already registered :(");

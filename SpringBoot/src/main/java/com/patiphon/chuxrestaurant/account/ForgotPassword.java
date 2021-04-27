@@ -1,14 +1,15 @@
 package com.patiphon.chuxrestaurant.account;
 
+import com.patiphon.chuxrestaurant.DTO.LoginDTO;
+import com.patiphon.chuxrestaurant.DTO.ResetPasswordDTO;
 import com.patiphon.chuxrestaurant.database.MySQLConnector;
+import com.patiphon.chuxrestaurant.utils.JwtUtil;
+import io.jsonwebtoken.JwtException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.*;
 import java.util.Date;
@@ -22,43 +23,57 @@ public class ForgotPassword {
     private JavaMailSender javaMailSender;
 
     @PostMapping(path = "/forgot")
-    public Map<String, Object> _forgot(@RequestParam String email) {
+    public Map<String, Object> _forgot(@CookieValue String token, @RequestBody LoginDTO info) {
         Map<String, Object> res = new HashMap<>();
-        try{
-            Connection connection = MySQLConnector.getConnection();
+        try {
+            String id_user = JwtUtil.parseToken(token);
 
-            PreparedStatement pstm = connection.prepareStatement("INSERT INTO reset_passwd (verify_cd, expire_tm, id_user) " +
-                    "SELECT ? as verify_cd, ? as expire_tm, id_user from user WHERE email = ?", Statement.RETURN_GENERATED_KEYS);
+            Connection conn = MySQLConnector.getConnection();
+            PreparedStatement check = conn.prepareStatement("SELECT id_user FROM user WHERE id_user = ?");
+            check.setInt(1, Integer.parseInt(id_user));
+            ResultSet rs_check = check.executeQuery();
 
-            // Random
-            String generatedString = RandomStringUtils.randomAlphanumeric(6);
-            pstm.setString(1, generatedString);
+            if (rs_check.next()) {
+                PreparedStatement pstm = conn.prepareStatement("INSERT INTO reset_passwd (verify_cd, expire_tm, id_user) " +
+                        "SELECT ? as verify_cd, ? as expire_tm, id_user from user WHERE email = ?", Statement.RETURN_GENERATED_KEYS);
 
-            Timestamp expire_tm = new Timestamp(new java.util.Date().getTime() + (15 * 60 * 1000)); // 15 minutes
-            pstm.setTimestamp(2, expire_tm);
+                // Random
+                String generatedString = RandomStringUtils.randomAlphanumeric(6);
+                pstm.setString(1, generatedString);
 
-            pstm.setString(3, email);
-            pstm.execute();
+                Timestamp expire_tm = new Timestamp(new java.util.Date().getTime() + (15 * 60 * 1000)); // 15 minutes
+                pstm.setTimestamp(2, expire_tm);
+                pstm.setString(3, info.getEmail());
+                pstm.execute();
 
-            // Check Id in "reset_passwd" table
-            try (ResultSet generatedKeys = pstm.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    res.put("id_reset",generatedKeys.getInt(1));
-                    SimpleMailMessage msg = new SimpleMailMessage();
-                    msg.setTo(email);
-                    msg.setFrom("chuxreataurant@patiphon.cf");
-                    msg.setSubject("Chuxrestaurant password reset token");
-                    msg.setText("Your verification code is " + generatedString);
-                    javaMailSender.send(msg);
-                    res.put("success", true);
-                    res.put("text", "Please check your email for verification code :)");
-                }
-                else {
-                    res.put("success", false);
-                    res.put("text", "Creating user failed, no ID obtained :(");
+                // Check Id in "reset_passwd" table
+                try (ResultSet generatedKeys = pstm.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        res.put("id_reset", generatedKeys.getInt(1));
+                        SimpleMailMessage msg = new SimpleMailMessage();
+                        msg.setTo(info.getEmail());
+                        msg.setFrom("chuxreataurant@patiphon.cf");
+                        msg.setSubject("Chuxrestaurant password reset token");
+                        msg.setText("Your verification code is " + generatedString);
+                        javaMailSender.send(msg);
+                        res.put("success", true);
+                        res.put("text", "Please check your email for verification code :)");
+                        return res;
+                    } else {
+                        res.put("success", false);
+                        res.put("text", "Creating user failed, no ID obtained :(");
+                        return res;
+                    }
                 }
             }
 
+            res.put("success", false);
+            res.put("text1", "There are no user ID obtained :(");
+
+        } catch (JwtException e) {
+            e.printStackTrace();
+            res.put("success", false);
+            res.put("text", "Token is incorrect :(");
         } catch (Exception e) {
             e.printStackTrace();
             res.put("success", false);
@@ -68,23 +83,21 @@ public class ForgotPassword {
     }
 
     @PostMapping(path = "/reset")
-    public Map<String, Object> _reset(@RequestParam int id_reset, @RequestParam String new_passwd, @RequestParam String verify) {
+    public Map<String, Object> _reset(@RequestBody ResetPasswordDTO info) {
         Map<String, Object> res = new HashMap<>();
-        try{
+        try {
             Connection conn = MySQLConnector.getConnection();
             PreparedStatement pstm = conn.prepareStatement("SELECT id_user FROM reset_passwd WHERE ? = verify_cd AND ? = id_reset AND expire_tm > ?");
-            pstm.setString(1, verify);
-            pstm.setInt(2, id_reset);
-            pstm.setTimestamp(3, new Timestamp(new Date().getTime()));
+            pstm.setString(1, info.getVerify());
+            pstm.setInt(2, info.getId_reset());
+            pstm.setTimestamp(3, new Timestamp(new Date().getTime())); // > Now
             ResultSet rs = pstm.executeQuery();
 
             if (rs.next()) {
                 PreparedStatement user = conn.prepareStatement("UPDATE user SET passwd = ? WHERE id_user = ?");
-
+                user.setString(1, info.getNew_passwd());
                 user.setInt(2, rs.getInt("id_user"));
-                user.setString(1, new_passwd);
-
-                user.execute();
+                user.executeUpdate();
 
                 res.put("success", true);
                 res.put("text", "Your password is changed :)");

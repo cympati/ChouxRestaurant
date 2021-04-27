@@ -17,7 +17,7 @@ public class Email {
     @Autowired
     private JavaMailSender javaMailSender;
 
-    @Scheduled(cron = "*/2 * * * * *", zone = "Asia/Bangkok")
+    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Bangkok")
     public void doScheduledReminder() {
 
         try {

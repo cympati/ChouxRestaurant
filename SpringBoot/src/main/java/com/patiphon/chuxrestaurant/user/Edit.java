@@ -42,9 +42,9 @@ public class Edit {
                 return res;
             }
             res.put("success", false);
-            res.put("text1", "There are no user ID obtained :(");
+            res.put("text", "There are no user ID obtained :(");
         } catch (SQLException e) {
-            res.put("loginStatus", false);
+            res.put("success", false);
             if (e instanceof SQLIntegrityConstraintViolationException) {
                 if (e.getMessage().contains("user_phone_no_uindex")) {
                     res.put("text", "This phone number is already registered :(");
@@ -70,17 +70,24 @@ public class Edit {
             String id_user = JwtUtil.parseToken(token);
 
             Connection conn = MySQLConnector.getConnection();
-            PreparedStatement check = conn.prepareStatement("SELECT id_user FROM user WHERE id_user = ?");
+            PreparedStatement check = conn.prepareStatement("SELECT id_user,passwd FROM user WHERE id_user = ?");
             check.setInt(1, Integer.parseInt(id_user));
             ResultSet rs_check = check.executeQuery();
 
+
             if (rs_check.next()) {
-                PreparedStatement psmt = conn.prepareStatement("UPDATE user SET passwd = ? WHERE id_user = ?");
-                psmt.setString(1, info.getNewPassword());
-                psmt.setInt(2, Integer.parseInt(id_user));
-                psmt.executeUpdate();
-                res.put("success", true);
-                res.put("text", "Your password is changed :)");
+                // Check new password is the same of current passwd or not
+                if (!(info.getNewPassword().equals(rs_check.getString("passwd")))) {
+                    PreparedStatement psmt = conn.prepareStatement("UPDATE user SET passwd = ? WHERE id_user = ?");
+                    psmt.setString(1, info.getNewPassword());
+                    psmt.setInt(2, Integer.parseInt(id_user));
+                    psmt.executeUpdate();
+                    res.put("success", true);
+                    res.put("text", "Your password is changed :)");
+                    return res;
+                }
+                res.put("success", false);
+                res.put("text", "Please, enter new password :(");
                 return res;
             }
             res.put("success", false);

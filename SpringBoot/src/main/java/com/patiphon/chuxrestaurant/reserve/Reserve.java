@@ -109,23 +109,28 @@ public class Reserve {
                 psmt_cp.setInt(1, Integer.parseInt(id_user));
                 psmt_cp.setInt(2, info.getId_rsv());
                 ok = psmt_cp.executeUpdate();
-            } else if (info.getStatus() == 2){ // Cancel
+                // Check it execute or not
+                if (ok >= 1) {
+                    res.put("success", true);
+                    res.put("text", "Your reservation is completed :)");
+                    return res;
+                }
+            }
+            if (info.getStatus() == 2) { // Cancel
                 PreparedStatement psmt_cc = conn.prepareStatement("UPDATE reservation SET status_rsv = 'cancel' " +
                         "WHERE id_user = ? AND id_rsv = ?");
                 psmt_cc.setInt(1, Integer.parseInt(id_user));
                 psmt_cc.setInt(2, info.getId_rsv());
                 ok = psmt_cc.executeUpdate();
+                // Check it execute or not
+                if (ok >= 1) {
+                    res.put("success", true);
+                    res.put("text", "Your reservation is cancelled :)");
+                    return res;
+                }
             }
-
-            // Check it execute or not
-            if (ok >= 1) {
-                res.put("success", true);
-                res.put("text", "Your reservation is completed :)");
-                return res;
-            }
-
             res.put("success", false);
-            res.put("text1", "There are no this reservation ID obtained in your history :(");
+            res.put("text", "There are no this reservation ID obtained in your history :(");
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -157,12 +162,11 @@ public class Reserve {
                 return res;
             }
             res.put("success", false);
-            res.put("text1", "There are no this reservation ID obtained in your history :(");
-            res.put("text2", "This reservation has been completed or cancelled. :(");
+            res.put("text", "There are no this reservation ID obtained in your history, or this reservation has been completed or cancelled. :(");
         } catch (SQLException e) {
             e.printStackTrace();
             res.put("success", false);
-            res.put("text1", "Something Wrong :(");
+            res.put("text", "Something Wrong :(");
         } catch (JwtException e) {
             e.printStackTrace();
             res.put("success", false);

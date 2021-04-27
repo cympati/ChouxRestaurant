@@ -3,6 +3,7 @@ package com.patiphon.chuxrestaurant.account;
 import com.patiphon.chuxrestaurant.DTO.LoginDTO;
 import com.patiphon.chuxrestaurant.database.MySQLConnector;
 import com.patiphon.chuxrestaurant.utils.JwtUtil;
+import io.jsonwebtoken.JwtException;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.*;
@@ -14,36 +15,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/auth")
 public class Login {
-    @GetMapping(path = "/user")
-    public Map<String, Object> _user() {
-        Map<String, Object> res = new HashMap<>();
-
-        try {
-            Connection connection = MySQLConnector.getConnection();
-            Statement stmt = connection.createStatement();
-            ResultSet resultSet = stmt.executeQuery("SELECT * FROM user");
-            res.put("success", true);
-            ArrayList<Object> arrList = new ArrayList<>();
-
-//          Loop each row of database
-            while (resultSet.next()) {
-                Map<String, Object> list = new HashMap<>();
-                list.put("id" , resultSet.getInt("id_user"));
-                list.put("firstname" , resultSet.getString("first_name"));
-                list.put("lastname" , resultSet.getString("last_name"));
-                list.put("phoneNumber" , resultSet.getString("phone_no"));
-                list.put("email" , resultSet.getString("email"));
-                list.put("password" , resultSet.getString("passwd"));
-                list.put("isAdmin" , resultSet.getBoolean("isAdmin"));
-                arrList.add(list);
-            }
-            res.put("userList", arrList);
-        } catch (SQLException e) {
-            res.put("success", false);
-        }
-        return res;
-    }
-
     @PostMapping(path = "/login")
     public Map<String, Object> _login(@RequestBody LoginDTO user) {
         Map<String, Object> res = new HashMap<>();
@@ -60,15 +31,15 @@ public class Login {
                 Map<String, Object> userDetail = new HashMap<>();
                 Map<String, Object> bgColor = new HashMap<>();
 
-                userDetail.put("id" , rs.getInt("id_user"));
-                userDetail.put("firstname" , rs.getString("first_name"));
-                userDetail.put("lastname" , rs.getString("last_name"));
-                userDetail.put("phoneNumber" , rs.getString("phone_no"));
-                userDetail.put("email" , rs.getString("email"));
-                userDetail.put("isAdmin" , rs.getBoolean("isAdmin"));
+                userDetail.put("id", rs.getInt("id_user"));
+                userDetail.put("firstname", rs.getString("first_name"));
+                userDetail.put("lastname", rs.getString("last_name"));
+                userDetail.put("phoneNumber", rs.getString("phone_no"));
+                userDetail.put("email", rs.getString("email"));
+                userDetail.put("isAdmin", rs.getBoolean("isAdmin"));
 
-                bgColor.put("color" , rs.getString("bg_color"));
-                bgColor.put("value" , rs.getString("bg_color").toLowerCase());
+                bgColor.put("color", rs.getString("bg_color"));
+                bgColor.put("value", rs.getString("bg_color").toLowerCase());
 
                 res.put("getRmd", rs.getBoolean("getReminders"));
                 res.put("bgColor", bgColor);
@@ -79,10 +50,14 @@ public class Login {
                 res.put("isLogin", false);
                 res.put("text", "login fail :(");
             }
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             res.put("success", false);
             res.put("text", "Something Wrong :(");
             e.printStackTrace();
+        } catch (JwtException e) {
+            e.printStackTrace();
+            res.put("success", false);
+            res.put("text", "Token is incorrect :(");
         }
         return res;
     }
