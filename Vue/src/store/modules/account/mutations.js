@@ -19,6 +19,19 @@ export const SET_DIALOGLOGIN = (state, value) => {
   state.dialogLogin = value;
 };
 
-export const SET_SNACKBAR = (state, value) => {
-  state.snackbar = value;
+// Snackbar
+export const SET_VALIDSNB = (state, value) => {
+  state.validSnb = value;
 };
+export const SET_INVALIDSNB = (state, value) => {
+  state.invalidSnb = value;
+};
+
+export const SET_DIALOGSNBVALID = (state, value) => {
+  state.validSnb.dialog = value;
+};
+
+export const SET_DIALOGSNBINVALID = (state, value) => {
+  state.invalidSnb.dialog = value;
+};
+//

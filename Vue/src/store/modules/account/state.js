@@ -15,8 +15,11 @@ export default {
   colorSelect: { color: "Brown", value: "brown" },
   isLogin: false,
   dialogLogin: false,
-  // snbForgotPasswdValid: false,
-  snackbar: {
+  validSnb: {
+    dialog: false,
+    text: "null",
+  },
+  invalidSnb: {
     dialog: false,
     text: "null",
   },

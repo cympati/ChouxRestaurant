@@ -52,8 +52,8 @@
       </footer>
       <ValidSnackbar
         :valid="getSnackbar.dialog"
-        @changeValid="setSnackbar(false)"
         :textValid="getSnackbar.text"
+        @changeDialog="setDialogSnackbar(false)"
       />
     </div>
   </body>
@@ -72,7 +72,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("account", ["setDialogLogin", "setSnackbar"]),
+    ...mapActions("account", ["setDialogLogin", "setDialogSnackbar"]),
   },
   computed: {
     ...mapGetters("account", ["getIsLogin", "getSnackbar", "getInfoUser"]),

@@ -15,4 +15,5 @@ export const getIsLogin = (state) => state.isLogin;
 
 export const getDialogLogin = (state) => state.dialogLogin;
 
-export const getSnackbar = (state) => state.snackbar;
+export const getValidSnb = (state) => state.validSnb;
+export const getInvalidSnb = (state) => state.invalidSnb;

@@ -68,6 +68,10 @@ public class ForgotPassword {
                             res.put("text", "Creating user failed, no ID obtained :(");
                             return res;
                         }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        res.put("success", false);
+                        res.put("text", "Something Wrong (generatedKeys) :(");
                     }
                 } else {
                     res.put("success", false);

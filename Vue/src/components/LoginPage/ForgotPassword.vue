@@ -251,7 +251,6 @@ export default {
         this.setDialogLogin(false);
         let snackbar = { text: "Your password is changed", dialog: true };
         this.setSnackbar(snackbar);
-        // this.$store.dispatch("setSnackbarForgotPasswdValid", true);
       } else if (
         this.yourVerificationCode == this.verificationCode &&
         this.newPassword == "" &&

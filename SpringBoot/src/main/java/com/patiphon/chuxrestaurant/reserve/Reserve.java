@@ -62,18 +62,28 @@ public class Reserve {
                     psmt_add_rsv.setInt(4, info.getSize());
                     psmt_add_rsv.execute();
 
-                    ResultSet generatedKeysRsv = psmt_add_rsv.getGeneratedKeys();
-                    if (generatedKeysRsv.next()) {
-                        int key = generatedKeysRsv.getInt(1);
-                        PreparedStatement psmt_add_table = conn.prepareStatement("INSERT INTO table_rsv (dt_start, id_table, id_rsv) VALUES (?, ?, ?)");
-                        psmt_add_table.setString(1, dateFormat.format(date1));
-                        psmt_add_table.setInt(2, rs_table.getInt("id_table"));
-                        psmt_add_table.setInt(3, key);
-                        psmt_add_table.execute();
-                        res.put("success", true);
-                        res.put("text", "Your reservation committed successfully :)");
-                        return res;
+                    try(ResultSet generatedKeysRsv = psmt_add_rsv.getGeneratedKeys()) {
+                        if (generatedKeysRsv.next()) {
+                            int key = generatedKeysRsv.getInt(1);
+                            PreparedStatement psmt_add_table = conn.prepareStatement("INSERT INTO table_rsv (dt_start, id_table, id_rsv) VALUES (?, ?, ?)");
+                            psmt_add_table.setString(1, dateFormat.format(date1));
+                            psmt_add_table.setInt(2, rs_table.getInt("id_table"));
+                            psmt_add_table.setInt(3, key);
+                            psmt_add_table.execute();
+                            res.put("success", true);
+                            res.put("text", "Your reservation committed successfully :)");
+                            return res;
+                        } else {
+                            res.put("success", false);
+                            res.put("text", "Reservation failed, no reservation ID obtained :(");
+                            return res;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        res.put("success", false);
+                        res.put("text", "Something Wrong (generatedKeysRsv) :(");
                     }
+
                 }
             }
             res.put("success", false);

@@ -16,17 +16,29 @@ export const setColorSelect = (app, value) => {
   app.commit("SET_COLORSELECT", value);
 };
 
+// Login
 export const setIsLogin = (app, value) => {
   app.commit("SET_ISLOGIN", value);
 };
-
 export const setDialogLogin = (app, value) => {
   app.commit("SET_DIALOGLOGIN", value);
 };
+//
 
-export const setSnackbar = (app, value) => {
-  app.commit("SET_SNACKBAR", value);
+// Snackbar
+export const setValidSnb = (app, value) => {
+  app.commit("SET_VALIDSNB", value);
 };
+export const setInvalidSnb = (app, value) => {
+  app.commit("SET_INVALIDSNB", value);
+};
+export const setDialogSnbValid = (app, value) => {
+  app.commit("SET_DIALOGSNBVALID", value);
+};
+export const setDialogSnbInvalid = (app, value) => {
+  app.commit("SET_DIALOGSNBINVALID", value);
+};
+//
 
 // account
 export const checkIsLogin = (app) => {
