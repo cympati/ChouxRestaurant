@@ -71,11 +71,13 @@
               </v-col>
             </v-row>
             <small style="color: #212123"
-              >*You can change only
-              <span style="color: #9f4c38">party size</span> and
+              >*You can edit only
               <span style="color: #9f4c38">special requests</span> in here, but
-              you can change the other in setting</small
-            >
+              you can edit the other in
+              <router-link to="/setting" style="text-decoration: none"
+                ><span style="color: #9f4c38">setting</span></router-link
+              >
+            </small>
           </v-container>
         </v-card-text>
         <v-divider></v-divider>

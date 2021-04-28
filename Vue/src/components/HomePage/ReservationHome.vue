@@ -22,7 +22,13 @@
             label="Date"
           ></v-text-field>
         </template>
-        <v-date-picker v-model="date" no-title color="blue"> </v-date-picker>
+        <v-date-picker
+          :allowed-dates="allowedDates"
+          v-model="date"
+          no-title
+          color="blue"
+        >
+        </v-date-picker>
       </v-menu>
 
       <!-- Time -->
@@ -85,6 +91,7 @@
         :infoDetails="infoDetails"
         :reserveDetails="reserveDetails"
         :date="date"
+        :allowedDates="allowedDates"
         @closeDialogFindATable="dialogFindTable = false"
         @resetForm="resetForm"
       />
@@ -93,6 +100,8 @@
 </template>
 
 <script>
+import moment from "moment";
+
 export default {
   data() {
     return {
@@ -135,6 +144,12 @@ export default {
       this.$refs.dateForm.reset();
       this.$refs.timeForm.reset();
       this.$refs.sizeForm.reset();
+    },
+    allowedDates(val) {
+      let nowStr = moment().format().substring(0, 10);
+      let now = new Date(nowStr).getTime();
+      let date = new Date(val).getTime();
+      return now <= date;
     },
   },
   mounted() {

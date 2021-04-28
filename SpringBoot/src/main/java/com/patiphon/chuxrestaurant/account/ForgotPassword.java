@@ -19,6 +19,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/auth")
 public class ForgotPassword {
+
     @Autowired
     private JavaMailSender javaMailSender;
 
@@ -35,7 +36,7 @@ public class ForgotPassword {
 
             if (rs_check.next()) {
                 PreparedStatement pstm = conn.prepareStatement("INSERT INTO reset_passwd (verify_cd, expire_tm, id_user) " +
-                        "SELECT ? as verify_cd, ? as expire_tm, id_user from user WHERE email = ?", Statement.RETURN_GENERATED_KEYS);
+                        "SELECT ? as verify_cd, ? as expire_tm, id_user from user WHERE email = ? AND id_user = ?", Statement.RETURN_GENERATED_KEYS);
 
                 // Random
                 String generatedString = RandomStringUtils.randomAlphanumeric(6);
@@ -44,32 +45,39 @@ public class ForgotPassword {
                 Timestamp expire_tm = new Timestamp(new java.util.Date().getTime() + (15 * 60 * 1000)); // 15 minutes
                 pstm.setTimestamp(2, expire_tm);
                 pstm.setString(3, info.getEmail());
-                pstm.execute();
+                pstm.setInt(4, rs_check.getInt("id_user"));
+                int rs = pstm.executeUpdate();
 
-                // Check Id in "reset_passwd" table
-                try (ResultSet generatedKeys = pstm.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        res.put("id_reset", generatedKeys.getInt(1));
-                        SimpleMailMessage msg = new SimpleMailMessage();
-                        msg.setTo(info.getEmail());
-                        msg.setFrom("chuxreataurant@patiphon.cf");
-                        msg.setSubject("Chuxrestaurant password reset token");
-                        msg.setText("Your verification code is " + generatedString);
-                        javaMailSender.send(msg);
-                        res.put("success", true);
-                        res.put("text", "Please check your email for verification code :)");
-                        return res;
-                    } else {
-                        res.put("success", false);
-                        res.put("text", "Creating user failed, no ID obtained :(");
-                        return res;
+                if (rs >= 1) {
+                    // Check Id in "reset_passwd" table
+                    try (ResultSet generatedKeys = pstm.getGeneratedKeys()) {
+                        if (generatedKeys.next()) {
+                            res.put("id_reset", generatedKeys.getInt(1));
+                            SimpleMailMessage msg = new SimpleMailMessage();
+                            msg.setTo(info.getEmail());
+//                            msg.setTo("chancreamz@gmail.com");
+                            msg.setFrom("chuxreataurant@patiphon.cf");
+                            msg.setSubject("Chuxrestaurant password reset token");
+                            msg.setText("Your verification code is " + generatedString);
+                            javaMailSender.send(msg);
+                            res.put("success", true);
+                            res.put("text", "Please check your email for verification code :)");
+                            return res;
+                        } else {
+                            res.put("success", false);
+                            res.put("text", "Creating user failed, no ID obtained :(");
+                            return res;
+                        }
                     }
+                } else {
+                    res.put("success", false);
+                    res.put("text", "Creating user failed, it is not email of this user ID :(");
+                    return res;
                 }
             }
-
             res.put("success", false);
             res.put("text1", "There are no user ID obtained :(");
-
+            return res;
         } catch (JwtException e) {
             e.printStackTrace();
             res.put("success", false);
@@ -82,7 +90,7 @@ public class ForgotPassword {
         return res;
     }
 
-    @PostMapping(path = "/reset")
+    @PatchMapping(path = "/reset")
     public Map<String, Object> _reset(@RequestBody ResetPasswordDTO info) {
         Map<String, Object> res = new HashMap<>();
         try {
@@ -94,24 +102,28 @@ public class ForgotPassword {
             ResultSet rs = pstm.executeQuery();
 
             if (rs.next()) {
-                PreparedStatement user = conn.prepareStatement("UPDATE user SET passwd = ? WHERE id_user = ?");
-                user.setString(1, info.getNew_passwd());
-                user.setInt(2, rs.getInt("id_user"));
-                user.executeUpdate();
+                try {
+                   PreparedStatement  user = conn.prepareStatement("UPDATE user SET passwd = ? WHERE id_user = ?");
+                    user.setString(1, info.getNew_passwd());
+                    user.setInt(2, rs.getInt("id_user"));
+                    user.executeUpdate();
 
-                res.put("success", true);
-                res.put("text", "Your password is changed :)");
+                    res.put("success", true);
+                    res.put("text", "Your password is changed :)");
+                } catch (Exception e) {
+                    res.put("success", false);
+                    res.put("text", "Something Wrong :(");
+                    e.printStackTrace();
+                }
             } else {
                 res.put("success", false);
-                res.put("text", "Something Wrong, no ID obtained or your verification code is incorrect :(");
+                res.put("text", "User ID or your verification code is incorrect :(");
             }
-
         } catch (Exception e) {
             e.printStackTrace();
             res.put("success", false);
             res.put("text", "Something Wrong :(");
         }
-
         return res;
     }
 

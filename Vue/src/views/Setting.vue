@@ -2,7 +2,7 @@
   <div id="setting" class="px-10 pt-1">
     <Layout :page="name">
       <VNavLeft />
-      <v-card class="pa-10 ma-5" v-if="getIsLogin">
+      <v-card class="pa-10 ma-1" v-if="getIsLogin">
         <v-container>
           <v-col>
             <v-card class="d-flex flex-column pa-5">
@@ -171,7 +171,7 @@ export default {
         { color: "Brown", value: "brown" },
         { color: "Red", value: "red" },
         { color: "Blue", value: "blue" },
-        // { color: "Green", value: "teal darken-1" },
+        { color: "Green", value: "Green" },
         { color: "Black", value: "black" },
       ],
       rules: {

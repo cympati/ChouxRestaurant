@@ -29,8 +29,8 @@ export const setSnackbar = (app, value) => {
 };
 
 // account
-export const checkLoginStatus = (app) => {
-  if (app.getters.getLoginStatus) {
+export const checkIsLogin = (app) => {
+  if (app.getters.getIsLogin) {
     router.push("/reservation");
   } else {
     app.commit("SET_DIALOGLOGIN", true);

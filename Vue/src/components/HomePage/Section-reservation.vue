@@ -16,7 +16,7 @@
       </div>
 
       <div class="buttom-table">
-        <a @click="$store.dispatch('checkLoginStatus')">
+        <a @click="checkIsLogin">
           <span class="check-reserve">
             Check your reservation&nbsp;
             <div id="line-append"></div>
@@ -29,10 +29,14 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 export default {
   components: {
     ReservationHome: () => import("./ReservationHome"),
     ArrowSVG: () => import("../JubJibComponent/ArrowSVG"),
+  },
+  methods: {
+    ...mapActions("account", ["checkIsLogin"]),
   },
 };
 </script>

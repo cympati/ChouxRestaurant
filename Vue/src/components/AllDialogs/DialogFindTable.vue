@@ -21,7 +21,7 @@
                 <!-- firstname -->
                 <v-col cols="12" sm="6" md="6">
                   <v-text-field
-                    v-model="getInfoUser.userDetail.firstname"
+                    v-model="getInfoUser.userDetail.firstName"
                     label="Firstname"
                     prepend-icon="mdi-account"
                     readonly
@@ -34,7 +34,7 @@
                 <!-- lastname -->
                 <v-col cols="12" sm="6" md="6">
                   <v-text-field
-                    v-model="getInfoUser.userDetail.lastname"
+                    v-model="getInfoUser.userDetail.lastName"
                     label="Lastname"
                     prepend-icon="mdi-account-multiple-outline"
                     readonly
@@ -181,7 +181,7 @@
               <small style="color: #212123"
                 >*please, carefully check your details
                 <a style="color: #9f4c38" @click="goToLogin"
-                  >(not {{ getInfoUser.userDetail.firstname }}?)</a
+                  >(not {{ getInfoUser.userDetail.firstName }}?)</a
                 ></small
               >
             </v-form>
@@ -212,7 +212,6 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
-import moment from "moment";
 export default {
   data() {
     return {
@@ -260,6 +259,7 @@ export default {
     date: String,
     reserveDetails: Object,
     resetForm: Function,
+    allowedDates: Function,
   },
   computed: {
     ...mapGetters("account", ["getInfoUser"]),
@@ -287,14 +287,6 @@ export default {
         this.$emit("closeDialogFindATable");
       }
     },
-    allowedDates(val) {
-      let nowStr = moment().format().substring(0, 10);
-      let now = new Date(nowStr).getTime();
-      let date = new Date(val).getTime();
-      return now <= date;
-    },
-    // parseInt(val.split("-")[2], 10) >= new Date().getDate().split("-")[2],
-    // console.log(new Date(val), new Date())
     goToLogin() {
       this.setDialogLogin(true);
       this.$emit("closeDialogFindATable");
