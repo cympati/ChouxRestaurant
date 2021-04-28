@@ -212,6 +212,7 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
+import moment from "moment";
 export default {
   data() {
     return {
@@ -287,10 +288,8 @@ export default {
       }
     },
     allowedDates(val) {
-      console.log(new Date());
-      let nowStr = moment().format();
-      console.log(nowStr);
-      let now = new Date().getTime();
+      let nowStr = moment().format().substring(0, 10);
+      let now = new Date(nowStr).getTime();
       let date = new Date(val).getTime();
       return now <= date;
     },
