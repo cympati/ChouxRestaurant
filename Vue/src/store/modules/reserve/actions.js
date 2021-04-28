@@ -82,3 +82,21 @@ export const editRsv = async ({ commit }, info) => {
     })
     .catch((error) => console.log(error));
 };
+
+// reserves
+export const loadReserves = async ({ commit }) => {
+  await axios
+    .patch("/reserves/all")
+    .then((response) => {
+      if (!response.data.success) {
+        const snackbar = {
+          dialog: response.data.success,
+          text: response.data.text,
+        };
+        commit("SET_INVALIDSNBRSV", snackbar);
+      } else {
+        commit("SET_RESERVES", response.data.reserves);
+      }
+    })
+    .catch((error) => console.log(error));
+};

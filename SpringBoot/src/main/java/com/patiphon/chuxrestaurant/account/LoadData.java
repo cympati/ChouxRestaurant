@@ -15,7 +15,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/auth")
 public class LoadData {
-    @PostMapping(path = "/load")
+    @GetMapping(path = "/load")
     public Map<String, Object> _load(@CookieValue String token) {
         Map<String, Object> res = new HashMap<>();
         try {
