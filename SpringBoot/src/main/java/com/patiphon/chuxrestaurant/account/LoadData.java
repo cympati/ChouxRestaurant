@@ -31,8 +31,8 @@ public class LoadData {
                 Map<String, Object> bgColor = new HashMap<>();
 
                 userDetail.put("id", rs.getInt("id_user"));
-                userDetail.put("firstname", rs.getString("first_name"));
-                userDetail.put("lastname", rs.getString("last_name"));
+                userDetail.put("firstName", rs.getString("first_name"));
+                userDetail.put("lastName", rs.getString("last_name"));
                 userDetail.put("phoneNumber", rs.getString("phone_no"));
                 userDetail.put("email", rs.getString("email"));
                 userDetail.put("isAdmin", rs.getBoolean("isAdmin"));
@@ -53,6 +53,7 @@ public class LoadData {
             res.put("text", "Token is incorrect :(");
         } catch (Exception e) {
             res.put("success", false);
+            res.put("text", "Something Wrong :(");
             e.printStackTrace();
         }
         return res;

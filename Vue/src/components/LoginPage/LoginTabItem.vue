@@ -94,10 +94,9 @@ export default {
     ...mapActions("account", ["loadDataFromLogin"]),
     async validateLogin() {
       if (this.$refs.loginForm.validate()) {
-        // console.log(this.loginInfo);
-        // let form = this.loginInfo;
         await this.loadDataFromLogin({ ...this.loginInfo });
-        // this.$store.dispatch("loadDataFromLogin", this.loginInfo);
+
+        // Reset
         this.$refs.loginForm.reset();
         this.$refs.loginForm.resetValidation();
       }

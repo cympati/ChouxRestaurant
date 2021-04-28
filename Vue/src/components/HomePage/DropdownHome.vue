@@ -10,7 +10,7 @@
               v-bind="attrs"
               v-on="{ ...tooltip, ...menu }"
             >
-              <span class="white--text font-name-size">{{ name }}</span>
+              <span class="white--text font-name-size">{{ getTwoChar }}</span>
             </v-avatar>
           </template>
           <span>Click me</span>
@@ -26,10 +26,7 @@
             <v-list-item-title>{{ item.title }}</v-list-item-title>
           </router-link>
           <router-link
-            :to="{
-              name: 'Setting',
-              params: { id: id },
-            }"
+            to="/setting"
             v-else-if="item.title === 'Setting'"
             class="text-dec"
           >
@@ -53,7 +50,6 @@ import { mapActions, mapGetters } from "vuex";
 export default {
   data() {
     return {
-      name: "Patiphon",
       id: "234",
       items: [
         { title: "Reservation" },
@@ -62,11 +58,11 @@ export default {
       ],
     };
   },
-  mounted() {
-    this.name = this.name.substring(0, 2).toUpperCase();
+  props: {
+    infoUser: Object,
   },
   computed: {
-    ...mapGetters("account", ["getColorSelect"]),
+    ...mapGetters("account", ["getColorSelect", "getTwoChar"]),
   },
   methods: {
     ...mapActions("account", ["logout"]),

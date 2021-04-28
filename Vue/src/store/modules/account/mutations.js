@@ -1,28 +1,24 @@
 // user
-export const set_userDetail = (state, value) => {
-  console.log(value);
+export const SET_USERDETAIL = (state, value) => {
   state.infoUser.userDetail = value;
-  console.log(state.infoUser.userDetail);
 };
 
-export const set_getReminders = (state, value) => {
-  console.log(value);
+export const SET_GETREMINDERS = (state, value) => {
   state.infoUser.getReminders = value;
 };
 
-export const set_colorSelect = (state, value) => {
+export const SET_COLORSELECT = (state, value) => {
   state.colorSelect = value;
 };
 
-export const set_isLogin = (state, value) => {
-  console.log("loginStatus : ", value);
+export const SET_ISLOGIN = (state, value) => {
   state.isLogin = value;
 };
 
-export const set_dialogLogin = (state, value) => {
+export const SET_DIALOGLOGIN = (state, value) => {
   state.dialogLogin = value;
 };
 
-export const set_snackbarForgotPasswdValid = (state, value) => {
-  state.snackbarForgotPasswdValid = value;
+export const SET_SNACKBAR = (state, value) => {
+  state.snackbar = value;
 };

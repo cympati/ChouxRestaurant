@@ -138,7 +138,7 @@ export default {
   width: 60%;
   height: 60%;
   border: rgb(33, 33, 35) 5px solid;
-  box-shadow: 10px 10px rgb(33, 33, 35);
+  // box-shadow: 10px 10px rgb(33, 33, 35);
   border-radius: 5px;
 }
 </style>

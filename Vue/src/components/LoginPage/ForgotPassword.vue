@@ -185,6 +185,7 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex";
 export default {
   data() {
     return {
@@ -222,12 +223,14 @@ export default {
     dialog: Boolean,
   },
   computed: {
+    ...mapGetters("account", ["getIsLogin", "getSnackbar"]),
     newPasswordMatch() {
       return () =>
         this.newPassword === this.confirmNewPassword || "Password must match";
     },
   },
   methods: {
+    ...mapActions("account", ["setDialogLogin", "setSnackbar"]),
     validateEmailVertificationForm() {
       if (this.$refs.emailVerificationForm.validate()) {
         this.step = 2;
@@ -245,8 +248,10 @@ export default {
         this.confirmNewPassword !== ""
       ) {
         this.$emit("closeDialog");
-        this.$store.dispatch("setDialogLogin", false);
-        this.$store.dispatch("setSnackbarForgotPasswdValid", true);
+        this.setDialogLogin(false);
+        let snackbar = { text: "Your password is changed", dialog: true };
+        this.setSnackbar(snackbar);
+        // this.$store.dispatch("setSnackbarForgotPasswdValid", true);
       } else if (
         this.yourVerificationCode == this.verificationCode &&
         this.newPassword == "" &&

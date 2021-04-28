@@ -74,6 +74,7 @@
                       <!-- </v-form> -->
                     </template>
                     <v-date-picker
+                      :allowed-dates="allowedDates"
                       v-model="datersv"
                       no-title
                       color="blue"
@@ -255,7 +256,6 @@ export default {
   },
   props: {
     dialog: Boolean,
-    // infoDetails: Object,
     date: String,
     reserveDetails: Object,
     resetForm: Function,
@@ -286,6 +286,16 @@ export default {
         this.$emit("closeDialogFindATable");
       }
     },
+    allowedDates(val) {
+      console.log(new Date());
+      let nowStr = moment().format();
+      console.log(nowStr);
+      let now = new Date().getTime();
+      let date = new Date(val).getTime();
+      return now <= date;
+    },
+    // parseInt(val.split("-")[2], 10) >= new Date().getDate().split("-")[2],
+    // console.log(new Date(val), new Date())
     goToLogin() {
       this.setDialogLogin(true);
       this.$emit("closeDialogFindATable");

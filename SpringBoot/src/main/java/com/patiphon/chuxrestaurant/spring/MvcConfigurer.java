@@ -10,7 +10,7 @@ public class MvcConfigurer implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins("http://localhost:8080","http://localhost:8081");
+        registry.addMapping("/**").allowedOrigins("http://localhost:8080","http://restaurant-api.patiphon.cf").allowCredentials(true).allowedMethods("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS");
     }
 }
 

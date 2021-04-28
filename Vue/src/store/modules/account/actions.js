@@ -1,31 +1,31 @@
 import Vue from "vue";
 import router from "../../../router";
 import axios from "../../../axios/axios";
-import qs from "qs";
+// import qs from "qs";
 
 export const setUserDetail = (app, value) => {
-  app.commit("set_userDetail", value);
+  app.commit("SET_USERDETAIL", value);
 };
 
 export const setGetReminders = (app, value) => {
   console.log(value);
-  app.commit("set_getReminders", value);
+  app.commit("SET_GETREMINDERS", value);
 };
 
 export const setColorSelect = (app, value) => {
-  app.commit("set_colorSelect", value);
+  app.commit("SET_COLORSELECT", value);
 };
 
 export const setIsLogin = (app, value) => {
-  app.commit("set_isLogin", value);
+  app.commit("SET_ISLOGIN", value);
 };
 
 export const setDialogLogin = (app, value) => {
-  app.commit("set_dialogLogin", value);
+  app.commit("SET_DIALOGLOGIN", value);
 };
 
-export const setSnackbarForgotPasswdValid = (app, value) => {
-  app.commit("set_snackbarForgotPasswdValid", value);
+export const setSnackbar = (app, value) => {
+  app.commit("SET_SNACKBAR", value);
 };
 
 // account
@@ -33,7 +33,7 @@ export const checkLoginStatus = (app) => {
   if (app.getters.getLoginStatus) {
     router.push("/reservation");
   } else {
-    app.commit("set_dialogLogin", true);
+    app.commit("SET_DIALOGLOGIN", true);
   }
 };
 
@@ -49,11 +49,12 @@ export const loadDataFromLogin = async ({ commit }, loginInfo) => {
       console.log(response.data);
       if (response.data.isLogin) {
         console.log(response.data);
-        commit("set_isLogin", response.data.isLogin);
-        commit("set_userDetail", response.data.userDetail);
-        commit("set_colorSelect", response.data.bgColor);
-        commit("set_getReminders", response.data.getRmd);
-        commit("set_dialogLogin", false);
+        commit("SET_ISLOGIN", response.data.isLogin);
+        commit("SET_USERDETAIL", response.data.userDetail);
+        commit("SET_COLORSELECT", response.data.bgColor);
+        commit("SET_GETREMINDERS", response.data.getRmd);
+        commit("SET_DIALOGLOGIN", false);
+
         // set "token" cookies
         Vue.$cookies.set("token", response.data.token);
       } else {
@@ -90,9 +91,9 @@ export const register = async ({ dispatch }, newUserForm) => {
 };
 
 //forgotpassword
-export const forgot = (email) => {
+export const forgot = (_app, email) => {
   axios
-    .post("/auth/forgotpassword", qs.stringify(email))
+    .post("/auth/forgotpassword", { email: email })
     .then((response) => {
       if (response.data.success) {
         alert(response.data.text);
@@ -100,32 +101,35 @@ export const forgot = (email) => {
         alert(response.data.text);
       }
     })
-    .catch((error) => console.error(error));
+    .catch((error) => console.log(error));
 };
 
 //load data from token
 export const loadDataFromToken = ({ commit }) => {
-  axios
-    .post(`/auth/load`, qs.stringify({ token: Vue.$cookies.get("token") }))
-    .then(
-      (response) => {
-        if (response.data.loginStatus) {
-          console.log(response.data.userDetail);
-          commit("set_isLogin", response.data.loginStatus);
-          commit("set_userDetail", response.data.userDetail);
-          commit("set_colorSelect", response.data.bgColor);
-          commit("set_getReminders", response.data.getRmd);
-        } else {
-          console.error("Your token is incorrect :(");
-        }
-      },
-      (error) => console.error("Something Wrong :(", error)
-    );
+  axios.post(`/auth/load`).then(
+    (response) => {
+      if (response.data.isLogin) {
+        commit("SET_ISLOGIN", response.data.isLogin);
+        commit("SET_USERDETAIL", response.data.userDetail);
+        commit("SET_COLORSELECT", response.data.bgColor);
+        commit("SET_GETREMINDERS", response.data.getRmd);
+      } else {
+        console.log("What happend(?)");
+      }
+    },
+    (error) => console.log("Something Wrong :(", error)
+  );
 };
 
 //logout
-export const logout = () => {
-  console.log("logout already");
+export const logout = ({ commit }) => {
   Vue.$cookies.remove("token");
-  location.reload();
+  if (!Vue.$cookies.get("token")) {
+    commit("SET_ISLOGIN", false);
+    commit("SET_USER", {});
+  }
+  if (router.currentRoute.name !== "Home") {
+    router.push({ name: "Home" });
+  }
+  alert("logout already");
 };

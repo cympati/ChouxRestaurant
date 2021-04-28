@@ -5,10 +5,8 @@
       <v-card class="pa-10 ma-5" v-if="getIsLogin">
         <v-container>
           <v-col>
-            <v-card-title class="d-flex flex-column pa-5">
-              <div>
-                <v-card-title class="ml-3"> My Profile </v-card-title>
-              </div>
+            <v-card class="d-flex flex-column pa-5">
+              <v-card-title class="ml-3"> My Profile </v-card-title>
               <div class="d-flex flex-row justify-space-around align-center">
                 <div
                   class="d-flex flex-column justify-space-around align-center"
@@ -16,7 +14,7 @@
                   <div class="mb-9">
                     <v-avatar size="300" :color="getColorSelect.value">
                       <span class="white--text font-name-size">{{
-                        nameAvatar
+                        getTwoChar
                       }}</span>
                     </v-avatar>
                   </div>
@@ -92,7 +90,7 @@
                   </v-container>
                 </div>
               </div>
-            </v-card-title>
+            </v-card>
           </v-col>
           <v-divider class="my-9"></v-divider>
 
@@ -242,16 +240,10 @@ export default {
   },
   mounted() {
     this.colorSelect = this.getColorSelect.value;
-    console.log(this.getColorSelect.value);
     // let id = this.$route.params.id;
     // let dataSelect = this.allUserData.find((el) => el.userInfo.id == id);
     // this.dataSelect = dataSelect;
     this.infoUser = this.getInfoUser;
-    this.nameAvatar = this.infoUser.userDetail.firstname
-      .substring(0, 2)
-      .toUpperCase();
-
-    console.log(this.getInfoUser.userDetail.firstname);
   },
   computed: {
     ...mapGetters("account", [
@@ -259,6 +251,7 @@ export default {
       "getColorSelect",
       "getIsLogin",
       "getInfoUser",
+      "getTwoChar",
     ]),
     ...mapActions("account", ["setGetReminders", "setColorSelect()"]),
   },

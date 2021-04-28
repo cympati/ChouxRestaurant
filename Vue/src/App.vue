@@ -10,7 +10,7 @@
 import Vue from "vue";
 import VueScrollTo from "vue-scrollto";
 import VueCookies from "vue-cookies";
-import { mapActions, mapState } from "vuex";
+import { mapActions } from "vuex";
 
 Vue.use(VueCookies);
 Vue.use(VueScrollTo, {
@@ -33,24 +33,19 @@ export default {
     return {};
   },
   methods: {
-    ...mapActions("account", ["loadDataFromToken", "setLoginStatus"]),
+    ...mapActions("account", ["loadDataFromToken", "logout"]),
   },
   mounted() {
     // cookie
-
-    Vue.$cookies.config("1d");
+    Vue.$cookies.config("1d"); // expire time
     if (Vue.$cookies.get("token")) {
-      // console.log(this.$store.state);
-      // console.log(this.loginStatus);
       this.loadDataFromToken();
     } else {
       console.log("Bla Bla Bla");
-      // this.setLoginStatus(false);
+      this.logout();
     }
   },
-  computed: {
-    ...mapState("account", ["loginStatus"]),
-  },
+  computed: {},
 };
 </script>
 

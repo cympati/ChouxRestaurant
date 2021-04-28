@@ -25,7 +25,7 @@
           >
             Login
           </button>
-          <DropdownHome v-else-if="getIsLogin" />
+          <DropdownHome v-else-if="getIsLogin" :infoUser="getInfoUser" />
         </div>
       </div>
 
@@ -51,9 +51,9 @@
         <p>&copy; copyright</p>
       </footer>
       <ValidSnackbar
-        :valid="$store.getters.getSnackbarForgotPasswdValid"
-        @changeValid="$store.dispatch('setSnackbarForgotPasswdValid', false)"
-        :textValid="notificationTextValid"
+        :valid="getSnackbar.dialog"
+        @changeValid="setSnackbar(false)"
+        :textValid="getSnackbar.text"
       />
     </div>
   </body>
@@ -64,11 +64,18 @@ import { mapActions, mapGetters } from "vuex";
 export default {
   data() {
     return {
-      dialogLogin: false,
+      // dialogLogin: false,
       loginStatus: false, // false = login, true = avatar
-      snackbarForgotPasswdValid: false,
-      notificationTextValid: "Your password is changed",
+      // snackbarForgotPasswdValid: false,
+      // notificationTextValid: "Your password is changed",
     };
+  },
+
+  methods: {
+    ...mapActions("account", ["setDialogLogin", "setSnackbar"]),
+  },
+  computed: {
+    ...mapGetters("account", ["getIsLogin", "getSnackbar", "getInfoUser"]),
   },
   components: {
     Login: () => import("../components/LoginPage/Login"),
@@ -83,20 +90,6 @@ export default {
       import("../components/HomePage/Section-reservation"),
     SectionMain: () => import("../components/HomePage/Section-main"),
     ValidSnackbar: () => import("../components/Snackbars/ValidSnackbar"),
-  },
-  methods: {
-    ...mapActions("account", ["setDialogLogin"]),
-    //     changeValid() {
-    // this.$store.dispatch('set_snackbarForgotPasswdValid', true)
-    //     },
-    changeLoginStatus() {
-      console.log(this.loginStatus);
-      this.loginStatus = !this.loginStatus;
-      this.$store.dispatch("setLoginStatus", this.loginStatus);
-    },
-  },
-  computed: {
-    ...mapGetters("account", ["getIsLogin"]),
   },
 };
 </script>
