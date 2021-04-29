@@ -12,9 +12,7 @@ public class MySQLConnector {
     public static final String USERNAME = "63130500216";
     public static final String PASSWORD = "abcd1234";
     private static Connection connection;
-//    public static Connection getConnection() throws SQLException {
-//        return DriverManager.getConnection(URL, USERNAME, PASSWORD);
-//    }
+
 
     public MySQLConnector() throws SQLException {
         reconnect();
@@ -29,5 +27,9 @@ public class MySQLConnector {
     private static void reconnect() throws SQLException {
         connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
     }
+
+    //    public static Connection getConnection() throws SQLException {
+//        return DriverManager.getConnection(URL, USERNAME, PASSWORD);
+//    }
 }
 

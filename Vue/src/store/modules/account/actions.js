@@ -133,7 +133,7 @@ export const loadDataFromToken = ({ commit }) => {
   );
 };
 
-//logout
+//Logout
 export const logout = ({ commit }) => {
   Vue.$cookies.remove("token");
   if (!Vue.$cookies.get("token")) {
@@ -144,4 +144,69 @@ export const logout = ({ commit }) => {
     router.push({ name: "Home" });
   }
   alert("logout already");
+};
+
+// Profile
+export const editProfile = async ({ commit }, info) => {
+  await axios
+    .patch("/edit/profile", {
+      color: info.color,
+      firstName: info.firstName,
+      lastName: info.lastName,
+      email: info.email,
+      phone: info.phone,
+      getReminders: info.getReminders,
+    })
+    .then((response) => {
+      const snackbar = {
+        dialog: response.data.success,
+        text: response.data.text,
+      };
+      if (response.data.success) {
+        commit("SET_VALIDSNBRSV", snackbar);
+      } else {
+        commit("SET_INVALIDSNBRSV", snackbar);
+      }
+    })
+    .catch((error) => console.log(error));
+};
+
+// New password
+export const editPassword = async ({ commit }, newPassword) => {
+  await axios
+    .patch("/edit/password", {
+      newPassword: newPassword,
+    })
+    .then((response) => {
+      const snackbar = {
+        dialog: response.data.success,
+        text: response.data.text,
+      };
+      if (response.data.success) {
+        commit("SET_VALIDSNBRSV", snackbar);
+      } else {
+        commit("SET_INVALIDSNBRSV", snackbar);
+      }
+    })
+    .catch((error) => console.log(error));
+};
+
+// Confirm password
+export const confirmPassword = async ({ commit }, confirmPassword) => {
+  await axios
+    .patch("/edit/password", {
+      confirmPasswd: confirmPassword,
+    })
+    .then((response) => {
+      const snackbar = {
+        dialog: response.data.success,
+        text: response.data.text,
+      };
+      if (response.data.success) {
+        commit("SET_VALIDSNBRSV", snackbar);
+      } else {
+        commit("SET_INVALIDSNBRSV", snackbar);
+      }
+    })
+    .catch((error) => console.log(error));
 };

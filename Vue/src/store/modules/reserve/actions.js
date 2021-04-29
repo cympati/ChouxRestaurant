@@ -83,7 +83,7 @@ export const editRsv = async ({ commit }, info) => {
     .catch((error) => console.log(error));
 };
 
-// reserves
+// Reserves
 export const loadReserves = async ({ commit }) => {
   await axios
     .patch("/reserves/all")

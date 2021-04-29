@@ -29,8 +29,8 @@ public class Edit {
                 PreparedStatement psmt = conn.prepareStatement("UPDATE user\n" +
                         "SET first_name = ?, last_name = ?, phone_no = ?, email = ?, bg_color = ?, getReminders = ?\n" +
                         "WHERE id_user = ?");
-                psmt.setString(1, info.getFirstname());
-                psmt.setString(2, info.getLastname());
+                psmt.setString(1, info.getFirstName());
+                psmt.setString(2, info.getLastName());
                 psmt.setString(3, info.getPhone());
                 psmt.setString(4, info.getEmail());
                 psmt.setString(5, info.getColor());
@@ -53,6 +53,7 @@ public class Edit {
                 }
             } else {
                 e.printStackTrace();
+                res.put("success", false);
                 res.put("text", "Something wrong :(");
             }
         } catch (JwtException e) {

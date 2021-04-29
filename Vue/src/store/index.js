@@ -3,7 +3,6 @@ import Vuex from "vuex";
 import VueCookies from "vue-cookies";
 
 import account from "./modules/account";
-import profile from "./modules/profile";
 import reserve from "./modules/reserve";
 
 Vue.use(Vuex, VueCookies);
@@ -16,5 +15,5 @@ export default new Vuex.Store({
   mutations: {},
   // calls mutation
   actions: {},
-  modules: { account, profile, reserve },
+  modules: { account, reserve },
 });
