@@ -41,7 +41,6 @@ export default {
     if (Vue.$cookies.get("token")) {
       this.loadDataFromToken();
     } else {
-      console.log("Bla Bla Bla");
       this.logout();
     }
   },

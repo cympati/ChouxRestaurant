@@ -55,6 +55,11 @@
         :textValid="getValidSnb.text"
         @closeDialog="setDialogSnbValid(false)"
       />
+      <InvalidSnackbar
+        :invalid="getInvalidSnb.dialog"
+        :textInvalid="getInvalidSnb.text"
+        @closeDialog="setDialogSnbInvalid(false)"
+      />
     </div>
   </body>
 </template>
@@ -76,10 +81,16 @@ export default {
       "setDialogLogin",
       "setValidSnb",
       "setDialogSnbValid",
+      "setDialogSnbInvalid",
     ]),
   },
   computed: {
-    ...mapGetters("account", ["getIsLogin", "getValidSnb", "getInfoUser"]),
+    ...mapGetters("account", [
+      "getIsLogin",
+      "getValidSnb",
+      "getInvalidSnb",
+      "getInfoUser",
+    ]),
   },
   components: {
     Login: () => import("../components/LoginPage/Login"),
@@ -94,6 +105,7 @@ export default {
       import("../components/HomePage/Section-reservation"),
     SectionMain: () => import("../components/HomePage/Section-main"),
     ValidSnackbar: () => import("../components/Snackbars/ValidSnackbar"),
+    InvalidSnackbar: () => import("../components/Snackbars/InvalidSnackbar"),
   },
 };
 </script>

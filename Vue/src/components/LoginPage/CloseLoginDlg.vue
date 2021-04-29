@@ -2,7 +2,7 @@
   <v-card-actions class="backgroud-close-tab pa-0 pr-4 pt-4">
     <v-spacer></v-spacer>
     <div>
-      <v-btn @click="setDialogLogin(false)" class="ma-0" text icon color="red ">
+      <v-btn @click="close" class="ma-0" text icon color="red ">
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </div>
@@ -15,6 +15,10 @@ import { mapActions } from "vuex";
 export default {
   methods: {
     ...mapActions("account", ["setDialogLogin"]),
+    async close() {
+      await this.$emit("resetForm");
+      this.setDialogLogin(false);
+    },
   },
 };
 </script>

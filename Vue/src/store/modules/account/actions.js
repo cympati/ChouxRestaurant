@@ -51,14 +51,16 @@ export const checkIsLogin = (app) => {
 
 //login
 export const loadDataFromLogin = async ({ commit }, loginInfo) => {
-  console.log(loginInfo);
   await axios
     .post("/auth/login", {
       email: loginInfo.email,
       password: loginInfo.password,
     })
     .then((response) => {
-      console.log(response.data);
+      const snackbar = {
+        dialog: response.data.isLogin,
+        text: response.data.text,
+      };
       if (response.data.isLogin) {
         console.log(response.data);
         commit("SET_ISLOGIN", response.data.isLogin);
@@ -69,15 +71,16 @@ export const loadDataFromLogin = async ({ commit }, loginInfo) => {
 
         // set "token" cookies
         Vue.$cookies.set("token", response.data.token);
+        commit("SET_VALIDSNB", snackbar);
       } else {
-        console.log("Your password is incorrect :(");
+        commit("SET_INVALIDSNB", snackbar);
       }
     })
     .catch((error) => console.log(error));
 };
 
 //register
-export const register = async ({ dispatch }, newUserForm) => {
+export const register = async ({ dispatch, commit }, newUserForm) => {
   await axios
     .post("/auth/register", {
       fn: newUserForm.fn,
@@ -88,15 +91,19 @@ export const register = async ({ dispatch }, newUserForm) => {
       getRmd: newUserForm.getRmd,
     })
     .then((response) => {
-      if (response.data.loginStatus) {
-        console.log(newUserForm.getRmd);
+      if (response.data.isLogin) {
+        console.log(newUserForm);
         const loginInfo = {
           email: newUserForm.em,
           password: newUserForm.passwd,
         };
         dispatch("loadDataFromLogin", loginInfo);
       } else {
-        alert(response.data.text);
+        const snackbar = {
+          dialog: response.data.isLogin,
+          text: response.data.text,
+        };
+        commit("SET_INVALIDSNB", snackbar);
       }
     })
     .catch((error) => console.log(error));
@@ -136,19 +143,19 @@ export const loadDataFromToken = ({ commit }) => {
 //Logout
 export const logout = ({ commit }) => {
   Vue.$cookies.remove("token");
-  if (!Vue.$cookies.get("token")) {
-    commit("SET_ISLOGIN", false);
-    commit("SET_USERDETAIL", {});
-  }
+
   if (router.currentRoute.name !== "Home") {
     router.push({ name: "Home" });
   }
-  let snackbar = {
-    dialog: true,
-    text: "logout already",
-  };
-  commit("SET_VALIDSNB", snackbar);
-  // alert("logout already");
+  if (!Vue.$cookies.get("token")) {
+    commit("SET_ISLOGIN", false);
+    commit("SET_USERDETAIL", {});
+    // let snackbar = {
+    //   dialog: true,
+    //   text: "Please login before reservation.",
+    // };
+    // commit("SET_INVALIDSNB", snackbar);
+  }
 };
 
 // Profile
@@ -168,9 +175,9 @@ export const editProfile = async ({ commit }, info) => {
         text: response.data.text,
       };
       if (response.data.success) {
-        commit("SET_VALIDSNBRSV", snackbar);
+        commit("SET_VALIDSNB", snackbar);
       } else {
-        commit("SET_INVALIDSNBRSV", snackbar);
+        commit("SET_INVALIDSNB", snackbar);
       }
     })
     .catch((error) => console.log(error));
@@ -188,9 +195,9 @@ export const editPassword = async ({ commit }, newPassword) => {
         text: response.data.text,
       };
       if (response.data.success) {
-        commit("SET_VALIDSNBRSV", snackbar);
+        commit("SET_VALIDSNB", snackbar);
       } else {
-        commit("SET_INVALIDSNBRSV", snackbar);
+        commit("SET_INVALIDSNB", snackbar);
       }
     })
     .catch((error) => console.log(error));
@@ -208,9 +215,9 @@ export const confirmPassword = async ({ commit }, confirmPassword) => {
         text: response.data.text,
       };
       if (response.data.success) {
-        commit("SET_VALIDSNBRSV", snackbar);
+        commit("SET_VALIDSNB", snackbar);
       } else {
-        commit("SET_INVALIDSNBRSV", snackbar);
+        commit("SET_INVALIDSNB", snackbar);
       }
     })
     .catch((error) => console.log(error));
