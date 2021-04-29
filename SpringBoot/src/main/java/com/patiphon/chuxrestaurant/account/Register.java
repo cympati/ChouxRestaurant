@@ -30,6 +30,7 @@ public class Register {
             pstm.setBoolean(6, newUser.getGetRmd());
             pstm.execute();
             res.put("isLogin", true);
+            res.put("text", "login successfully :)");
         } catch (Exception e) {
             res.put("isLogin", false);
             if (e instanceof SQLIntegrityConstraintViolationException) {

@@ -3,7 +3,7 @@
   <v-snackbar v-model="valid" :multi-line="multiLine" color="success">
     {{ textValid }}
     <template v-slot:action="{ attrs }">
-      <v-btn color="white" text v-bind="attrs" @click="changeDialog">
+      <v-btn color="white" text v-bind="attrs" @click="$emit('closeDialog')">
         Close
       </v-btn>
     </template>

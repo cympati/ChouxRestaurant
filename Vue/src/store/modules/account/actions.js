@@ -118,7 +118,7 @@ export const forgot = (_app, email) => {
 
 //load data from token
 export const loadDataFromToken = ({ commit }) => {
-  axios.post(`/auth/load`).then(
+  axios.get(`/auth/load`).then(
     (response) => {
       if (response.data.isLogin) {
         commit("SET_ISLOGIN", response.data.isLogin);
@@ -138,12 +138,17 @@ export const logout = ({ commit }) => {
   Vue.$cookies.remove("token");
   if (!Vue.$cookies.get("token")) {
     commit("SET_ISLOGIN", false);
-    commit("SET_USER", {});
+    commit("SET_USERDETAIL", {});
   }
   if (router.currentRoute.name !== "Home") {
     router.push({ name: "Home" });
   }
-  alert("logout already");
+  let snackbar = {
+    dialog: true,
+    text: "logout already",
+  };
+  commit("SET_VALIDSNB", snackbar);
+  // alert("logout already");
 };
 
 // Profile

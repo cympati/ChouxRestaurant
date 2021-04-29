@@ -51,9 +51,9 @@
         <p>&copy; copyright</p>
       </footer>
       <ValidSnackbar
-        :valid="getSnackbar.dialog"
-        :textValid="getSnackbar.text"
-        @changeDialog="setDialogSnackbar(false)"
+        :valid="getValidSnb.dialog"
+        :textValid="getValidSnb.text"
+        @closeDialog="setDialogSnbValid(false)"
       />
     </div>
   </body>
@@ -72,10 +72,14 @@ export default {
   },
 
   methods: {
-    ...mapActions("account", ["setDialogLogin", "setDialogSnackbar"]),
+    ...mapActions("account", [
+      "setDialogLogin",
+      "setValidSnb",
+      "setDialogSnbValid",
+    ]),
   },
   computed: {
-    ...mapGetters("account", ["getIsLogin", "getSnackbar", "getInfoUser"]),
+    ...mapGetters("account", ["getIsLogin", "getValidSnb", "getInfoUser"]),
   },
   components: {
     Login: () => import("../components/LoginPage/Login"),
