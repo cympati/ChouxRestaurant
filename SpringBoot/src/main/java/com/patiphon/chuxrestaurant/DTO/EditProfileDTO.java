@@ -6,7 +6,7 @@ public class EditProfileDTO {
     private String lastName;
     private String email;
     private String phone;
-    private boolean getReminders;
+    private int getReminders;
 
     public String getColor() {
         return color;
@@ -48,11 +48,23 @@ public class EditProfileDTO {
         this.phone = phone;
     }
 
-    public boolean isGetReminders() {
+    public int isGetReminders() {
         return getReminders;
     }
 
-    public void setGetReminders(boolean getReminders) {
+    public void setGetReminders(int getReminders) {
         this.getReminders = getReminders;
+    }
+
+    @Override
+    public String toString() {
+        return "EditProfileDTO{" +
+                "color='" + color + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", getReminders=" + getReminders +
+                '}';
     }
 }

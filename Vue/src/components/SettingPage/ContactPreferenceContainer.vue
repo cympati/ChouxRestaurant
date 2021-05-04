@@ -5,8 +5,9 @@
         <v-col cols="12" sm="12" md="12">
           <v-checkbox
             class="pa-0 ma-0"
-            v-model="checkbox"
-            label="Yes, I want to get text updates and reminders about my
+            @change="$emit('changeCheck')"
+            v-model="checkboxCone"
+            label="Yes, I want to get text updates and reminders about your
           reservations."
           ></v-checkbox>
         </v-col>
@@ -16,15 +17,14 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
 export default {
   data() {
     return {
-      checkbox: this.getGetReminders,
+      checkboxCone: this.checkbox,
     };
   },
-  computed: {
-    ...mapGetters("account", ["getGetReminders"]),
+  props: {
+    checkbox: Boolean,
   },
 };
 </script>

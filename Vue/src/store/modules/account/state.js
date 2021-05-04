@@ -3,14 +3,19 @@ export default {
     // User information
     getReminders: false,
     userDetail: {
-      firstName: "",
-      lastName: "",
-      id: "",
-      email: "",
-      phoneNumber: "",
+      firstName: "user",
+      lastName: "user",
+      id: "0",
+      email: "user",
+      phoneNumber: "0",
       isAdmin: false,
     },
   },
+  newPasswordForm: {
+    new: "",
+    confirm: "",
+  },
+  match: false,
   colorSelect: { color: "Brown", value: "brown" },
   isLogin: false,
   dialogLogin: false,
@@ -22,4 +27,5 @@ export default {
     dialog: false,
     text: "null",
   },
+  resetId: 0,
 };

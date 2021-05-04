@@ -17,12 +17,14 @@ public class Email {
     @Autowired
     private JavaMailSender javaMailSender;
 
-    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Bangkok")
+    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Bangkok") // Send email everyday at midnight
     public void doScheduledReminder() {
 
         try {
             Connection conn = MySQLConnector.getConnection();
-            PreparedStatement pstm = conn.prepareStatement("SELECT table_rsv.id_rsv AS id_rsv, user.email AS email FROM ((table_rsv INNER JOIN reservation ON table_rsv.id_rsv = reservation.id_rsv) INNER JOIN user ON reservation.id_user = user.id_user) WHERE dt_start >= ? AND dt_start <= ?");
+            PreparedStatement pstm = conn.prepareStatement("SELECT table_rsv.id_rsv AS id_rsv, user.email AS email " +
+                    "FROM ((table_rsv INNER JOIN reservation ON table_rsv.id_rsv = reservation.id_rsv) " +
+                    "INNER JOIN user ON reservation.id_user = user.id_user AND user.getReminders = 1) WHERE dt_start >= ? AND dt_start <= ?");
             pstm.setTimestamp(1, new Timestamp(new java.util.Date().getTime() + (60 * 60 * 24 * 1000))); // now + 1day
             pstm.setTimestamp(2, new Timestamp(new java.util.Date().getTime() + ((60 * 60 * 24 * 1000) * 2))); // now + 2day
             ResultSet rs = pstm.executeQuery();

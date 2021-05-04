@@ -16,156 +16,147 @@
 
       <v-card-text>
         <v-container>
-          <v-row>
-            <!-- firstname -->
-            <v-col cols="12" sm="6" md="6">
-              <v-text-field
-                v-model="editedItem.detail.firstName"
-                label="Firstname"
-                prepend-icon="mdi-account"
-                readonly
-                required
-                clearable
-                requiredInfo
-                :rules="[rules.requiredInfo]"
-              ></v-text-field>
-            </v-col>
+          <v-form ref="reserveForm" v-model="validForm" lazy-validation>
+            <v-row>
+              <!-- firstname -->
+              <v-col cols="12" sm="6" md="6">
+                <v-text-field
+                  v-model="getInfoUser.userDetail.firstName"
+                  label="Firstname"
+                  prepend-icon="mdi-account"
+                  readonly
+                  required
+                  clearable
+                  requiredInfo
+                  :rules="[rules.requiredInfo]"
+                ></v-text-field>
+              </v-col>
 
-            <!-- lastname -->
-            <v-col cols="12" sm="6" md="6">
-              <v-text-field
-                v-model="editedItem.detail.lastName"
-                label="Lastname"
-                required
-                clearable
-                requiredInfo
-                :rules="[rules.requiredInfo]"
-                readonly
-                prepend-icon="mdi-account-multiple-outline"
-              ></v-text-field>
-            </v-col>
+              <!-- lastname -->
+              <v-col cols="12" sm="6" md="6">
+                <v-text-field
+                  v-model="getInfoUser.userDetail.lastName"
+                  label="Lastname"
+                  required
+                  clearable
+                  requiredInfo
+                  :rules="[rules.requiredInfo]"
+                  readonly
+                  prepend-icon="mdi-account-multiple-outline"
+                ></v-text-field>
+              </v-col>
 
-            <v-col cols="12" sm="6" md="6">
-              <v-menu
-                ref="menu"
-                v-model="menu"
-                transition="scale-transition"
-                open-on-click
-                width="auto"
-              >
-                <!-- Date -->
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    clearable
+              <v-col cols="12" sm="6" md="6">
+                <v-menu
+                  ref="menu"
+                  v-model="menu"
+                  transition="scale-transition"
+                  open-on-click
+                  width="auto"
+                >
+                  <!-- Date -->
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      clearable
+                      ref="dateForm"
+                      v-model="date"
+                      v-bind="attrs"
+                      v-on="on"
+                      input
+                      requiredInfo
+                      :rules="[rules.requiredInfo]"
+                      prepend-icon="mdi-calendar-range"
+                      label="Date"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
                     v-model="date"
-                    v-bind="attrs"
-                    v-on="on"
-                    input
-                    requiredInfo
-                    :rules="[rules.requiredInfo]"
-                    prepend-icon="mdi-calendar-range"
-                    label="Date"
-                  ></v-text-field>
-                </template>
-                <v-date-picker v-model="date" no-title color="blue" width="300">
-                </v-date-picker>
-              </v-menu>
-            </v-col>
+                    no-title
+                    color="blue"
+                    width="300"
+                  >
+                  </v-date-picker>
+                </v-menu>
+              </v-col>
 
-            <!-- time -->
-            <v-col cols="12" sm="6" md="6">
-              <v-autocomplete
-                v-model="editedItem.time"
-                prepend-icon="mdi-clock-time-eight-outline"
-                auto-select-first
-                clearable
-                :items="[
-                  '10:00 AM',
-                  '10:30 AM',
-                  '11:00 AM',
-                  '11:30 AM',
-                  '12:00 PM',
-                  '12:30 PM',
-                  '01:00 PM',
-                  '01:30 PM',
-                  '02:00 PM',
-                  '02:30 PM',
-                  '03:00 PM',
-                  '03:30 PM',
-                  '04:00 PM',
-                  '04:30 PM',
-                  '05:00 PM',
-                  '05:30 PM',
-                  '06:00 PM',
-                  '06:30 PM',
-                  '07:00 PM',
-                  '07:30 PM',
-                  '08:00 PM',
-                ]"
-                label="Time"
-                requiredInfo
-                :rules="[rules.requiredInfo]"
-              ></v-autocomplete>
-            </v-col>
+              <!-- time -->
+              <v-col cols="12" sm="6" md="6">
+                <v-autocomplete
+                  v-model="reserveDetails.time"
+                  prepend-icon="mdi-clock-time-eight-outline"
+                  auto-select-first
+                  ref="timeForm"
+                  clearable
+                  :items="times"
+                  item-text="time"
+                  item-value="val"
+                  label="Time"
+                  requiredInfo
+                  :rules="[rules.requiredInfo]"
+                ></v-autocomplete>
+              </v-col>
 
-            <!-- Phone number -->
-            <v-col cols="12" sm="6" md="6">
-              <v-text-field
-                v-model="editedItem.detail.phoneNumber"
-                label="Phone number"
-                prepend-icon="mdi-phone"
-                readonly
-                required
-                clearable
-                requiredInfo
-                :rules="[rules.requiredInfo]"
-              ></v-text-field>
-            </v-col>
+              <!-- Phone number -->
+              <v-col cols="12" sm="6" md="6">
+                <v-text-field
+                  v-model="getInfoUser.userDetail.phoneNumber"
+                  label="Phone number"
+                  prepend-icon="mdi-phone"
+                  readonly
+                  required
+                  clearable
+                  requiredInfo
+                  :rules="[rules.requiredInfo]"
+                ></v-text-field>
+              </v-col>
 
-            <!-- party size -->
-            <v-col cols="12" sm="6" md="6">
-              <v-select
-                v-model="editedItem.detail.partySize"
-                :items="['1', '2', '3', '4', '5', '6']"
-                label="Party size"
-                required
-                clearable
-                requiredInfo
-                :rules="[rules.requiredInfo]"
-                prepend-icon="mdi-account-group"
-              ></v-select>
-            </v-col>
+              <!-- party size -->
+              <v-col cols="12" sm="6" md="6">
+                <v-select
+                  v-model="reserveDetails.size"
+                  :items="['1', '2', '3', '4', '5', '6']"
+                  label="Party size"
+                  ref="sizeForm"
+                  required
+                  clearable
+                  requiredInfo
+                  :rules="[rules.requiredInfo]"
+                  prepend-icon="mdi-account-group"
+                ></v-select>
+              </v-col>
 
-            <!-- Email -->
-            <v-col cols="12" sm="12" md="12">
-              <v-text-field
-                v-model="editedItem.detail.email"
-                label="Your email"
-                prepend-icon="mdi-email"
-                readonly
-                required
-                clearable
-                requiredInfo
-                :rules="[rules.requiredInfo]"
-              ></v-text-field>
-            </v-col>
+              <!-- Email -->
+              <v-col cols="12" sm="12" md="12">
+                <v-text-field
+                  v-model="getInfoUser.userDetail.email"
+                  label="Your email"
+                  prepend-icon="mdi-email"
+                  readonly
+                  required
+                  clearable
+                  requiredInfo
+                  :rules="[rules.requiredInfo]"
+                ></v-text-field>
+              </v-col>
 
-            <!-- Special Requests -->
-            <v-col cols="12" sm="12" md="12">
-              <v-text-field
-                v-model="editedItem.specialRequests"
-                label="Special requests"
-                clearable
-                prepend-icon="mdi-email-newsletter"
-              ></v-text-field>
-            </v-col>
-          </v-row>
+              <!-- Special Requests -->
+              <v-col cols="12" sm="12" md="12">
+                <v-text-field
+                  v-model="reserveDetails.specialReq"
+                  ref="reqForm"
+                  label="Special requests"
+                  clearable
+                  prepend-icon="mdi-email-newsletter"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+          </v-form>
           <small style="color: #212123"
             >*please, carefully check your details
             <a
               style="color: #9f4c38"
-              @click="[$store.dispatch('setDialogLogin', true), close()]"
-              >(not {{ $store.getters.getInfoUser.userDetail.firstName }}?)</a
+              @click="[setDialogLogin(true), $emit('closeDialogAdd')]"
+              >(not {{ getInfoUser.userDetail.firstName }}?)</a
             ></small
           >
         </v-container>
@@ -173,8 +164,10 @@
       <v-divider></v-divider>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="red lighten-1" text @click="close"> Cancel </v-btn>
-        <v-btn color="success darken-1" text @click="reserveLoading">
+        <v-btn color="red lighten-1" text @click="$emit('closeDialogAdd')">
+          Cancel
+        </v-btn>
+        <v-btn color="success darken-1" text @click="validateForm">
           Confirm
         </v-btn>
       </v-card-actions>
@@ -186,109 +179,115 @@
 export default {
   data() {
     return {
+      cardTitle: "Make a reservation",
       loading: false,
-      selection: 1,
       menu: false,
+      validForm: true,
       rules: {
         requiredInfo: (value) => !!value || "Required",
         min: (v) => (v && v.length >= 8) || "Min 8 characters",
       },
       minutes: "05",
       second: "00",
-      cardTitle: "Make a reservation",
-      editedIndex: -1,
+      times: [
+        { time: "10:00 AM", val: { h: "10", m: "00" } },
+        { time: "10:30 AM", val: { h: "10", m: "30" } },
+        { time: "11:00 AM", val: { h: "11", m: "00" } },
+        { time: "11:30 AM", val: { h: "11", m: "30" } },
+        { time: "12:00 PM", val: { h: "12", m: "00" } },
+        { time: "12:30 PM", val: { h: "12", m: "30" } },
+        { time: "01:00 PM", val: { h: "13", m: "00" } },
+        { time: "01:30 PM", val: { h: "13", m: "30" } },
+        { time: "02:00 PM", val: { h: "14", m: "00" } },
+        { time: "02:30 PM", val: { h: "14", m: "30" } },
+        { time: "03:00 PM", val: { h: "15", m: "00" } },
+        { time: "03:30 PM", val: { h: "15", m: "30" } },
+        { time: "04:00 PM", val: { h: "16", m: "00" } },
+        { time: "04:30 PM", val: { h: "16", m: "30" } },
+        { time: "05:00 PM", val: { h: "17", m: "00" } },
+        { time: "05:30 PM", val: { h: "17", m: "30" } },
+        { time: "06:00 PM", val: { h: "18", m: "00" } },
+        { time: "06:30 PM", val: { h: "18", m: "30" } },
+        { time: "07:00 PM", val: { h: "19", m: "00" } },
+        { time: "07:30 PM", val: { h: "19", m: "30" } },
+        { time: "08:00 PM", val: { h: "20", m: "00" } },
+      ],
+
+      reserveDetails: {
+        date: {
+          year: "",
+          month: "",
+          day: "",
+        },
+        time: "",
+        size: "",
+        specialReq: "",
+      },
       date: new Date().toISOString().substr(0, 10),
-      defaultItem: {
-        id: "000",
-        detail: {
-          firstName: "",
-          lastName: "",
-          partySize: 0,
-          email: "",
-          phoneNumber: "",
-          specialRequests: "",
-        },
-        date: {
-          year: 0,
-          month: 0,
-          day: 0,
-        },
-        time: "",
-        status: "upcoming",
-        statusComplete: false,
-        statusCancel: false,
-      },
-      editedItem: {
-        id: "000",
-        detail: {
-          firstName: "",
-          lastName: "",
-          partySize: 0,
-          email: "",
-          phoneNumber: "",
-          specialRequests: "",
-        },
-        date: {
-          year: 0,
-          month: 0,
-          day: 0,
-        },
-        time: "",
-        status: "complete",
-        statusComplete: false,
-        statusCancel: false,
-      },
     };
   },
   props: {
-    infoDetails: Array,
     dialogAddReserve: Boolean,
+    getInfoUser: Object,
+    setDialogLogin: Function,
+    addRsv: Function,
   },
   components: {
     VCardTitle: () => import("../JubJibComponent/VCardTitle"),
   },
   methods: {
-    reserveLoading() {
+    async reserveLoading() {
       this.loading = true;
-      setTimeout(
-        () => [
-          (this.loading = false),
-          (this.dialogConfirm = true),
-          this.save(),
-        ],
-        2000
-      );
-    },
-    close() {
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
+      await new Promise((res) => {
+        setTimeout(() => [res(), (this.loading = false), this.save()], 2000);
       });
-      this.$emit("closeDialogAdd");
-      // console.log("execute");
     },
 
-    save() {
-      if (this.editedIndex > -1) {
-        Object.assign(this.infoDetails[this.editedIndex], this.editedItem);
-        console.log(this.infoDetails[this.editedIndex]);
-      } else {
-        this.infoDetails.push(this.editedItem);
-        // มันส่งกลับไปที่หน้า Upcomming ไม่ใช่หน้ากลาง
-        // console.log(this.editedItem);
-        // console.log(this.infoDetails);
+    async validateForm() {
+      if (this.$refs.reserveForm.validate()) {
+        await this.reserveLoading();
+        this.$refs.timeForm.reset();
+        this.$refs.sizeForm.reset();
+        this.$refs.reqForm.reset();
+        this.$refs.dateForm.reset();
+        this.$refs.reserveForm.resetValidation();
+        this.$emit("closeDialogAdd");
       }
-      this.close();
+    },
+
+    async save() {
+      console.log("Confirm Reservation Already!");
+      this.reserveDetails.date = {
+        year: this.date.substring(0, 4),
+        month: this.date.substring(5, 7),
+        day: this.date.substring(8),
+      };
+      let date_time = new Date(
+        this.reserveDetails.date.year,
+        this.reserveDetails.date.month - 1,
+        this.reserveDetails.date.day,
+        this.reserveDetails.time.h,
+        this.reserveDetails.time.m,
+        0
+      ).getTime();
+      console.log(date_time);
+      let newReserve = {
+        dt: date_time,
+        size: this.reserveDetails.size,
+        req: this.reserveDetails.specialReq,
+      };
+      console.log(newReserve);
+      await this.addRsv(newReserve);
     },
   },
   mounted() {
-    this.editedItem.date = {
+    this.reserveDetails.date = {
       year: this.date.substring(0, 4),
       month: this.date.substring(5, 7),
       day: this.date.substring(8),
     };
 
-    let totalTime = 300;
+    let totalTime = 300; // 5min
     if (totalTime > 0) {
       setInterval(() => {
         this.minutes = "0" + Math.floor(totalTime / 60).toFixed(0);
@@ -296,9 +295,7 @@ export default {
         this.minutes = "0" + Math.floor(totalTime / 60).toFixed(0);
         this.second = ("0" + (totalTime % 60)).slice(-2);
         if (totalTime <= 0) {
-          this.dialogAddReserve = false;
-          // this.infoDetails = Object.assign({}, this.defaultItem);
-          // this.infoDetails = this.defaultItem;
+          this.$emit("closeDialogAdd");
         }
       }, 1000);
     }

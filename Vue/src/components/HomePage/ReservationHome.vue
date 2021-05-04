@@ -38,29 +38,9 @@
         auto-select-first
         clearable
         solo
-        :items="[
-          '10:00 AM',
-          '10:30 AM',
-          '11:00 AM',
-          '11:30 AM',
-          '12:00 PM',
-          '12:30 PM',
-          '01:00 PM',
-          '01:30 PM',
-          '02:00 PM',
-          '02:30 PM',
-          '03:00 PM',
-          '03:30 PM',
-          '04:00 PM',
-          '04:30 PM',
-          '05:00 PM',
-          '05:30 PM',
-          '06:00 PM',
-          '06:30 PM',
-          '07:00 PM',
-          '07:30 PM',
-          '08:00 PM',
-        ]"
+        :items="times"
+        item-text="time"
+        item-value="val"
         label="Time"
         required
       ></v-select>
@@ -68,7 +48,7 @@
       <!-- Party Size -->
       <v-select
         ref="sizeForm"
-        v-model="reserveDetails.partySize"
+        v-model="reserveDetails.size"
         auto-select-first
         clearable
         solo
@@ -77,21 +57,19 @@
         required
       ></v-select>
 
-      <v-btn
-        app
-        color="blue"
-        @click="dialogFindTable = !dialogFindTable"
-        dark
-        large
+      <v-btn v-if="getIsAdmin" app color="blue" @click="showAdmin" dark large
+        >Find a table</v-btn
+      >
+      <v-btn v-else app color="blue" @click="check" dark large
         >Find a table</v-btn
       >
       <DialogFindTable
         v-if="dialogFindTable"
         :dialog="dialogFindTable"
-        :infoDetails="infoDetails"
         :reserveDetails="reserveDetails"
         :date="date"
         :allowedDates="allowedDates"
+        :times="times"
         @closeDialogFindATable="dialogFindTable = false"
         @resetForm="resetForm"
       />
@@ -105,28 +83,38 @@ import moment from "moment";
 export default {
   data() {
     return {
-      infoDetails: {
-        // User
-        firstName: "Patiphon",
-        lastName: "Klangpraphan",
-        id: "234",
-        email: "cympati@gmail.com",
-        password: "28052545",
-        phoneNumber: "0956600463",
-        isAdmin: 0,
-      },
+      times: [
+        { time: "10:00 AM", val: { h: "10", m: "00" } },
+        { time: "10:30 AM", val: { h: "10", m: "30" } },
+        { time: "11:00 AM", val: { h: "11", m: "00" } },
+        { time: "11:30 AM", val: { h: "11", m: "30" } },
+        { time: "12:00 PM", val: { h: "12", m: "00" } },
+        { time: "12:30 PM", val: { h: "12", m: "30" } },
+        { time: "01:00 PM", val: { h: "13", m: "00" } },
+        { time: "01:30 PM", val: { h: "13", m: "30" } },
+        { time: "02:00 PM", val: { h: "14", m: "00" } },
+        { time: "02:30 PM", val: { h: "14", m: "30" } },
+        { time: "03:00 PM", val: { h: "15", m: "00" } },
+        { time: "03:30 PM", val: { h: "15", m: "30" } },
+        { time: "04:00 PM", val: { h: "16", m: "00" } },
+        { time: "04:30 PM", val: { h: "16", m: "30" } },
+        { time: "05:00 PM", val: { h: "17", m: "00" } },
+        { time: "05:30 PM", val: { h: "17", m: "30" } },
+        { time: "06:00 PM", val: { h: "18", m: "00" } },
+        { time: "06:30 PM", val: { h: "18", m: "30" } },
+        { time: "07:00 PM", val: { h: "19", m: "00" } },
+        { time: "07:30 PM", val: { h: "19", m: "30" } },
+        { time: "08:00 PM", val: { h: "20", m: "00" } },
+      ],
+
       reserveDetails: {
-        reserveId: "000",
         date: {
           year: "",
           month: "",
           day: "",
         },
         time: "",
-        partySize: "",
-        specialRequests: "",
-        // 0 = pending, 1 = come, 2 = not come, 3 = complete, 4 = cancel
-        status: 0,
+        size: "",
       },
       date: new Date().toISOString().substr(0, 10),
       menu: false,
@@ -136,10 +124,12 @@ export default {
   components: {
     DialogFindTable: () => import("../AllDialogs/DialogFindTable"),
   },
+  props: {
+    getIsAdmin: Boolean,
+    getIsLogin: Boolean,
+    setInvalidSnb: Function,
+  },
   methods: {
-    save(date) {
-      this.$refs.menuForm.save(date);
-    },
     resetForm() {
       this.$refs.dateForm.reset();
       this.$refs.timeForm.reset();
@@ -150,6 +140,24 @@ export default {
       let now = new Date(nowStr).getTime();
       let date = new Date(val).getTime();
       return now <= date;
+    },
+    showAdmin() {
+      let snackbar = {
+        dialog: true,
+        text: "You are admin :(",
+      };
+      this.setInvalidSnb(snackbar);
+    },
+    check() {
+      if (this.getIsLogin) {
+        this.dialogFindTable = !this.dialogFindTable;
+      } else {
+        let snackbar = {
+          dialog: true,
+          text: "Please login before :(",
+        };
+        this.setInvalidSnb(snackbar);
+      }
     },
   },
   mounted() {

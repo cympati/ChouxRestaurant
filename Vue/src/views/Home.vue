@@ -60,6 +60,16 @@
         :textInvalid="getInvalidSnb.text"
         @closeDialog="setDialogSnbInvalid(false)"
       />
+      <ValidSnackbar
+        :valid="getValidSnbRsv.dialog"
+        :textValid="getValidSnbRsv.text"
+        @closeDialog="setDialogSnbValidRsv(false)"
+      />
+      <InvalidSnackbar
+        :invalid="getInvalidSnbRsv.dialog"
+        :textInvalid="getInvalidSnbRsv.text"
+        @closeDialog="setDialogSnbInvalidRsv(false)"
+      />
     </div>
   </body>
 </template>
@@ -67,21 +77,15 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 export default {
-  data() {
-    return {
-      // dialogLogin: false,
-      loginStatus: false, // false = login, true = avatar
-      // snackbarForgotPasswdValid: false,
-      // notificationTextValid: "Your password is changed",
-    };
-  },
-
   methods: {
     ...mapActions("account", [
       "setDialogLogin",
-      "setValidSnb",
       "setDialogSnbValid",
       "setDialogSnbInvalid",
+    ]),
+    ...mapActions("reserve", [
+      "setDialogSnbValidRsv",
+      "setDialogSnbInvalidRsv",
     ]),
   },
   computed: {
@@ -91,6 +95,7 @@ export default {
       "getInvalidSnb",
       "getInfoUser",
     ]),
+    ...mapGetters("reserve", ["getInvalidSnbRsv", "getValidSnbRsv"]),
   },
   components: {
     Login: () => import("../components/LoginPage/Login"),

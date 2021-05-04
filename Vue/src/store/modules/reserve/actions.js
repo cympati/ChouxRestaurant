@@ -1,6 +1,6 @@
 // import Vue from "vue";
 // import router from "../../../router";
-import axios from "axios";
+import axios from "../../../axios/axios";
 
 export const setReserves = (app, value) => {
   app.commit("SET_RESERVES", value);
@@ -31,7 +31,7 @@ export const addRsv = async ({ commit }, newReserve) => {
     })
     .then((response) => {
       const snackbar = {
-        dialog: response.data.success,
+        dialog: true,
         text: response.data.text,
       };
       if (response.data.success) {
@@ -45,6 +45,8 @@ export const addRsv = async ({ commit }, newReserve) => {
 
 // Approve
 export const approveRsv = async ({ commit }, info) => {
+  console.log("Approve");
+  console.log(info);
   await axios
     .patch("/reserve/approve", {
       id_rsv: info.id,
@@ -52,13 +54,15 @@ export const approveRsv = async ({ commit }, info) => {
     })
     .then((response) => {
       const snackbar = {
-        dialog: response.data.success,
+        dialog: true,
         text: response.data.text,
       };
       if (response.data.success) {
-        commit("SET_VALIDSNBRSV", snackbar);
+        // commit("SET_VALIDSNBRSV", snackbar);
+        location.reload();
       } else {
         commit("SET_INVALIDSNBRSV", snackbar);
+        // location.reload();
       }
     })
     .catch((error) => console.log(error));
@@ -66,6 +70,7 @@ export const approveRsv = async ({ commit }, info) => {
 
 // Edit
 export const editRsv = async ({ commit }, info) => {
+  console.log(info);
   await axios
     .patch("/reserve/edit", {
       id_rsv: info.id,
@@ -73,11 +78,11 @@ export const editRsv = async ({ commit }, info) => {
     })
     .then((response) => {
       const snackbar = {
-        dialog: response.data.success,
+        dialog: true,
         text: response.data.text,
       };
       if (response.data.success) {
-        commit("SET_VALIDSNBRSV", snackbar);
+        location.reload();
       } else {
         commit("SET_INVALIDSNBRSV", snackbar);
       }
@@ -88,15 +93,19 @@ export const editRsv = async ({ commit }, info) => {
 // Reserves
 export const loadReserves = async ({ commit }) => {
   await axios
-    .patch("/reserves/all")
+    .get("/reserves/all")
     .then((response) => {
       if (!response.data.success) {
+        console.log("Load data fail");
         const snackbar = {
-          dialog: response.data.success,
+          dialog: true,
           text: response.data.text,
         };
         commit("SET_INVALIDSNBRSV", snackbar);
       } else {
+        console.log("Load data successfully");
+        console.log("isAdmin : " + response.data.isAdmin);
+        console.log(response.data.reserves);
         commit("SET_RESERVES", response.data.reserves);
       }
     })

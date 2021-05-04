@@ -7,7 +7,10 @@
       persistent
     >
       <div>
-        <CloseLoginDlg @resetForm="resetForm" />
+        <CloseLoginDlg
+          @resetForm="resetLoginForm"
+          :setDialogLogin="setDialogLogin"
+        />
         <v-tabs
           v-model="tab"
           show-arrows
@@ -106,12 +109,15 @@ export default {
     ]),
 
     // Reset form
-    resetForm() {
+    resetLoginForm() {
       this.$refs.loginForm.reset();
       this.$refs.loginForm.resetValidation();
+    },
+    resetRegisForm() {
       this.$refs.registerForm.reset();
       this.$refs.registerForm.resetValidation();
     },
+    //
 
     // Check form and then load data
     async validateLogin(loginInfo) {
@@ -119,18 +125,17 @@ export default {
         await this.loadDataFromLogin({ ...loginInfo });
 
         // Reset
-        this.resetForm();
+        this.resetLoginForm();
       }
     },
 
     async validateRegister(newUser) {
       if (this.$refs.registerForm.validate()) {
         newUser.getRmd = this.getGetReminders;
-        // console.log(...newUser);
         await this.register({ ...newUser });
 
         // Reset
-        this.resetForm();
+        this.resetRegisForm();
       }
     },
   },
@@ -141,11 +146,7 @@ export default {
     RegisterTabItem: () => import("./RegisterTabItem"),
   },
   computed: {
-    ...mapGetters("account", [
-      "getInfoUser",
-      "getDialogLogin",
-      "getGetReminders",
-    ]),
+    ...mapGetters("account", ["getDialogLogin", "getGetReminders"]),
   },
 };
 </script>

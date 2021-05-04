@@ -28,4 +28,13 @@ public class AddReserveDTO {
     public void setReq(String req) {
         this.req = req;
     }
+
+    @Override
+    public String toString() {
+        return "AddReserveDTO{" +
+                "date_time=" + date_time +
+                ", size=" + size +
+                ", req='" + req + '\'' +
+                '}';
+    }
 }

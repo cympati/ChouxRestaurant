@@ -3,17 +3,21 @@
     <div class="my-6"></div>
     <UpcomingTableUser
       :headers="headers"
-      :infoDetails="infoDetails.filter((info) => info.status === 'upcoming')"
+      :allReserve="
+        allReserve && allReserve.filter((val) => val.status === 'pending')
+      "
     />
     <v-divider class="my-10"></v-divider>
     <PastTableUser
       :headers="headers"
-      :infoDetails="
-        infoDetails.filter(
+      :allReserve="
+        allReserve &&
+        allReserve.filter(
           (info) => info.status === 'complete' || info.status === 'cancel'
         )
       "
     />
+    <v-divider class="my-10"></v-divider>
   </div>
 </template>
 
@@ -28,7 +32,7 @@ export default {
   },
   props: {
     headers: Array,
-    infoDetails: Array,
+    allReserve: Array,
   },
 };
 </script>

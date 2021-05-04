@@ -8,7 +8,7 @@
         prepend-icon="mdi-account"
         label="Firstname"
         maxlength="25"
-        @keydown.enter="validateRegister"
+        @keydown.enter="$emit('validateRegister', newUser)"
         class="my-0 py-0"
         height="28px"
       ></v-text-field>
@@ -21,7 +21,7 @@
         label="Lastname"
         maxlength="25"
         required
-        @keydown.enter="validateRegister"
+        @keydown.enter="$emit('validateRegister', newUser)"
         class="my-0 py-0"
         height="28px"
       ></v-text-field>
@@ -34,7 +34,7 @@
         prepend-icon="mdi-email"
         label="Your email"
         required
-        @keydown.enter="validateRegister"
+        @keydown.enter="$emit('validateRegister', newUser)"
         class="my-0 py-0"
         height="28px"
       ></v-text-field>
@@ -48,7 +48,7 @@
         hint="0XXXXXXXXX"
         required
         maxlength="10"
-        @keydown.enter="validateRegister"
+        @keydown.enter="$emit('validateRegister', newUser)"
         class="my-0 py-0"
         height="28px"
       ></v-text-field>
@@ -65,7 +65,7 @@
         hint="At least 8 characters"
         counter
         @click:append="show = !show"
-        @keydown.enter="validateRegister"
+        @keydown.enter="$emit('validateRegister', newUser)"
         class="my-0 py-0"
         height="28px"
       ></v-text-field>
@@ -82,7 +82,7 @@
         label="Confirm password"
         counter
         @click:append="show = !show"
-        @keydown.enter="validateRegister"
+        @keydown.enter="$emit('validateRegister', newUser)"
         height="28px"
         class="my-0 py-0"
       ></v-text-field>

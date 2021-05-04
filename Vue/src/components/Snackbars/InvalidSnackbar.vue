@@ -1,5 +1,4 @@
 <template>
-  <!-- timeout="3000" -->
   <v-snackbar
     v-model="invalid"
     :multi-line="multiLine"
@@ -28,3 +27,6 @@ export default {
   },
 };
 </script>
+
+
+

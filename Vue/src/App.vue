@@ -33,7 +33,7 @@ export default {
     return {};
   },
   methods: {
-    ...mapActions("account", ["loadDataFromToken", "logout"]),
+    ...mapActions("account", ["loadDataFromToken", "logout", "setInvalidSnb"]),
   },
   mounted() {
     // cookie
@@ -41,7 +41,11 @@ export default {
     if (Vue.$cookies.get("token")) {
       this.loadDataFromToken();
     } else {
-      this.logout();
+      let snackbar = {
+        dialog: true,
+        text: "Please login before",
+      };
+      this.setInvalidSnb(snackbar);
     }
   },
   computed: {},

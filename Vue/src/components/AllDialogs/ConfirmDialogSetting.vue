@@ -19,7 +19,7 @@
                   block
                   v-model="confirmPassword"
                   :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-                  :rules="[rules.requiredInfo, rules.min]"
+                  :rules="[rules.required, rules.min]"
                   :type="show ? 'text' : 'password'"
                   label="Confirm Password"
                   counter
@@ -33,7 +33,11 @@
         <v-card-actions>
           <v-spacer></v-spacer>
 
-          <v-btn color="red lighten-1" text @click="$emit('close', false)">
+          <v-btn
+            color="red lighten-1"
+            text
+            @click="$emit('changeDialogConfirm', false)"
+          >
             Cancel
           </v-btn>
 
@@ -57,8 +61,8 @@ export default {
     checkConfirmPassword: Function,
     setMatch: Function,
     getMatch: Boolean,
-
     dialogConfirm: Boolean,
+    changeInfo: Function,
     rules: Object,
   },
   methods: {
@@ -69,7 +73,7 @@ export default {
         this.$refs.confirmPasswordForm.resetValidation();
         this.$emit("changeInfo");
         console.log("Successfully :)");
-        this.$emit("close");
+        this.$emit("changeDialogConfirm");
       } else {
         console.log("Your confirm password must match :(");
       }

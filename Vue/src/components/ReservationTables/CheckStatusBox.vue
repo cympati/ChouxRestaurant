@@ -1,24 +1,15 @@
 <template>
   <div>
-    <div
-      v-if="item.statusComplete == false && item.statusCancel == false"
-      class="pa-0"
-    >
-      <v-icon small class="mr-7" @click="$emit('changeToComplete', item)">
-        mdi-check-bold
-      </v-icon>
-      <v-icon small @click="$emit('changeToCancel', item)" class="pa-0">
-        mdi-close-thick
-      </v-icon>
+    <div v-if="item.status === 'pending'" class="pa-0">
+      <v-icon small class="mr-7" @click="approveCP"> mdi-check-bold </v-icon>
+      <v-icon small @click="approveCC" class="pa-0"> mdi-close-thick </v-icon>
     </div>
     <!-- Check complete -->
-    <div v-else-if="item.statusComplete == true && item.statusCancel == false">
-      <span style="color: green">
-        {{ item.status }}
-      </span>
+    <div v-else-if="item.status === 'complete'">
+      <span style="color: green"> completed </span>
     </div>
     <!-- Check cancel -->
-    <div v-else-if="item.statusCancel == true && item.statusComplete == false">
+    <div v-else-if="item.status === 'cancel'">
       <span style="color: #9f4c38">cancelled</span>
     </div>
   </div>
@@ -29,8 +20,24 @@ export default {
   props: {
     item: Object,
     i: Number,
-    changeToCancel: Function,
-    changeToComplete: Function,
+    approveRsv: Function,
+  },
+
+  methods: {
+    approveCP() {
+      let info = {
+        status: 1,
+        id: this.item.id,
+      };
+      this.approveRsv(info);
+    },
+    approveCC() {
+      let info = {
+        status: 2,
+        id: this.item.id,
+      };
+      this.approveRsv(info);
+    },
   },
 };
 </script>

@@ -10,15 +10,15 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
-
 export default {
   methods: {
-    ...mapActions("account", ["setDialogLogin"]),
     async close() {
       await this.$emit("resetForm");
       this.setDialogLogin(false);
     },
+  },
+  props: {
+    setDialogLogin: Function,
   },
 };
 </script>

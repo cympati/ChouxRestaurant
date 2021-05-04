@@ -27,14 +27,17 @@ public class Password {
             PreparedStatement pstm = conn.prepareStatement("SELECT passwd FROM user WHERE id_user = ?");
             pstm.setInt(1, Integer.parseInt(id_user));
             ResultSet rs = pstm.executeQuery();
+            System.out.println(info.getConfirmPasswd());
             rs.next();
             if (info.getConfirmPasswd().equals(rs.getString("passwd"))) {
+                System.out.println(info.getConfirmPasswd());
                 res.put("success", true);
-                res.put("text", "Your password is correct :)");
+                res.put("text", "Your confirm password is correct :)");
                 return res;
             }
+            System.out.println(info.getConfirmPasswd());
             res.put("success", false);
-            res.put("text", "Your password is incorrect :(");
+            res.put("text", "Your confirm password must match :(");
         } catch (SQLException e) {
             e.printStackTrace();
             res.put("success", false);

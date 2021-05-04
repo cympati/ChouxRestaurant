@@ -55,7 +55,7 @@
                       </v-card-text>
 
                       <v-card-actions>
-                        <v-btn text @click="$emit('closeDialog')"> Back </v-btn>
+                        <v-btn text @click="backToLogin"> Back </v-btn>
                         <v-spacer></v-spacer>
                         <v-btn
                           color="primary"
@@ -81,7 +81,7 @@
                       </v-card-text>
 
                       <v-card-actions>
-                        <v-btn text @click="step = 1"> Back </v-btn>
+                        <v-btn text @click="resetPassForm()"> Back </v-btn>
                         <v-spacer></v-spacer>
                         <v-btn color="primary" @click="step = 3">
                           Continue
@@ -134,7 +134,7 @@
                               <v-col cols="12" sm="12" md="12">
                                 <v-text-field
                                   label="Verification code"
-                                  v-model="yourVerificationCode"
+                                  v-model="yourVerifyCode"
                                   required
                                   clearable
                                   requiredInfo
@@ -151,12 +151,7 @@
                         <v-btn
                           color="primary"
                           :disabled="!validVerificationPassword"
-                          @click="
-                            [
-                              checkVerificationCode(),
-                              validateVerificationPasswordForm(),
-                            ]
-                          "
+                          @click="validateVerificationPasswordForm()"
                         >
                           Confirm
                         </v-btn>
@@ -169,23 +164,19 @@
           </v-container>
         </v-card-text>
       </v-card>
-      <InvalidSnackbar
-        :invalid="snackbarInvalid"
-        @changeInvalid="snackbarInvalid = false"
-        :textInvalid="notificationTextInvalid"
-      />
 
-      <InvalidSnackbar
-        :invalid="snackbarPasswordInvalid"
-        @changeInvalid="snackbarPasswordInvalid = false"
-        :textInvalid="notificationTextPasswordInvalid"
-      />
+      <!-- <InvalidSnackbar
+        :invalid="getInvalidSnb.dialog"
+        :textInvalid="getInvalidSnb.text"
+        @closeDialog="setDialogSnbInvalid(false)"
+      /> -->
     </v-dialog>
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from "vuex";
+import axios from "../../axios/axios";
 export default {
   data() {
     return {
@@ -199,7 +190,7 @@ export default {
       valid: true,
       snackbarInvalid: false,
       snackbarPasswordInvalid: false,
-      yourVerificationCode: "",
+      yourVerifyCode: "",
       verificationCode: "1234",
       confirmNewPassword: "",
       newPassword: "",
@@ -215,35 +206,86 @@ export default {
     };
   },
   components: {
-    InvalidSnackbar: () => import("../Snackbars/InvalidSnackbar"),
-    // ValidSnackbar: () => import("../Snackbars/ValidSnackbar"),
+    // InvalidSnackbar: () => import("../Snackbars/InvalidSnackbar"),
     VCardTitle: () => import("../JubJibComponent/VCardTitle"),
   },
   props: {
     dialog: Boolean,
   },
   computed: {
-    ...mapGetters("account", ["getIsLogin", "getSnackbar"]),
+    ...mapGetters("account", [
+      "getIsLogin",
+      "getInvalidSnb",
+      "getInfoUser",
+      "getResetId",
+    ]),
     newPasswordMatch() {
       return () =>
         this.newPassword === this.confirmNewPassword || "Password must match";
     },
   },
   methods: {
-    ...mapActions("account", ["setDialogLogin", "setSnackbar"]),
-    validateEmailVertificationForm() {
+    ...mapActions("account", [
+      "setDialogLogin",
+      "setValidSnb",
+      "setInvalidSnb",
+      "forgot",
+      "reset",
+    ]),
+    resetEmailForm() {
+      this.$refs.emailVerificationForm.reset();
+      this.$refs.emailVerificationForm.resetValidation();
+    },
+    resetPassForm() {
+      this.step = 1;
+      this.$refs.verificationPasswordForm.reset();
+      this.$refs.verificationPasswordForm.resetValidation();
+    },
+    async validateEmailVertificationForm() {
       if (this.$refs.emailVerificationForm.validate()) {
+        await this.forgot(this.email);
         this.step = 2;
+        this.resetEmailForm();
       }
     },
-    validateVerificationPasswordForm() {
+    async validateVerificationPasswordForm() {
       if (this.$refs.verificationPasswordForm.validate()) {
-        // ...
+        console.log("Reset Password");
+        await axios
+          .patch("/auth/reset", {
+            id_reset: this.getResetId,
+            new_passwd: this.newPassword,
+            verify: this.yourVerifyCode,
+          })
+          .then((response) => {
+            const snackbar = {
+              dialog: true,
+              text: response.data.text,
+            };
+            console.log(response.data.success);
+            if (response.data.success) {
+              this.resetEmailForm();
+              this.resetPassForm();
+              this.$emit("closeDialog");
+              this.setDialogLogin(false);
+              this.setValidSnb(snackbar);
+            } else {
+              this.resetEmailForm();
+              this.resetPassForm();
+              this.$emit("closeDialog");
+              this.setDialogLogin(false);
+              this.setInvalidSnb(snackbar);
+            }
+          })
+          .catch((error) => console.log(error));
       }
+    },
+    backToLogin() {
+      this.resetEmailForm(), this.$emit("closeDialog");
     },
     checkVerificationCode() {
       if (
-        this.yourVerificationCode == this.verificationCode &&
+        this.yourVerifyCode == this.verificationCode &&
         this.newPassword !== "" &&
         this.confirmNewPassword !== ""
       ) {
@@ -252,7 +294,7 @@ export default {
         let snackbar = { text: "Your password is changed", dialog: true };
         this.setSnackbar(snackbar);
       } else if (
-        this.yourVerificationCode == this.verificationCode &&
+        this.yourVerifyCode == this.verificationCode &&
         this.newPassword == "" &&
         this.confirmNewPassword == ""
       ) {

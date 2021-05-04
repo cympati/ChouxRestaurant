@@ -11,6 +11,7 @@
     <h1 class="">{{ page }}</h1>
     <v-spacer></v-spacer>
     <router-link
+      v-if="getIsLogin"
       :to="{
         name: 'Setting',
         params: { id: dataDetail.id },
@@ -19,12 +20,12 @@
     >
       <VAvatar />
     </router-link>
-    <!-- <button @click.stop="setProfileDrawer" class="text-dec">
-    </button> -->
+    <div v-else></div>
   </v-app-bar>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
   name: "VNavAbove",
   data() {
@@ -46,11 +47,8 @@ export default {
   props: {
     page: String,
   },
-  methods: {
-    // setProfileDrawer() {
-    //   this.profileDrawer = !this.profileDrawer;
-    //   this.$store.dispatch("setProfileDrawer", this.profileDrawer);
-    // },
+  computed: {
+    ...mapGetters("account", ["getIsLogin"]),
   },
 };
 </script>

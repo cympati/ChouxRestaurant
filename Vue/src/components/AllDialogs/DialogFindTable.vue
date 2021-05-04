@@ -16,7 +16,7 @@
         <v-divider></v-divider>
         <v-card-text>
           <v-container>
-            <v-form ref="reserveForm" v-model="validFrom" lazy-validation>
+            <v-form ref="reserveForm" v-model="validForm" lazy-validation>
               <v-row>
                 <!-- firstname -->
                 <v-col cols="12" sm="6" md="6">
@@ -54,11 +54,6 @@
                   >
                     <!-- Date -->
                     <template v-slot:activator="{ on, attrs }">
-                      <!-- <v-form
-                      ref="reserveForm"
-                      v-model="validFrom"
-                      lazy-validation
-                    > -->
                       <v-text-field
                         clearable
                         v-model="datersv"
@@ -71,7 +66,6 @@
                         prepend-icon="mdi-calendar-range"
                         label="Date"
                       ></v-text-field>
-                      <!-- </v-form> -->
                     </template>
                     <v-date-picker
                       :allowed-dates="allowedDates"
@@ -86,41 +80,19 @@
 
                 <!-- time -->
                 <v-col cols="12" sm="6" md="6">
-                  <!-- <v-form ref="reserveForm" v-model="validFrom" lazy-validation> -->
                   <v-autocomplete
                     v-model="time"
                     ref="timeForm"
                     auto-select-first
                     clearable
-                    :items="[
-                      '10:00 AM',
-                      '10:30 AM',
-                      '11:00 AM',
-                      '11:30 AM',
-                      '12:00 PM',
-                      '12:30 PM',
-                      '01:00 PM',
-                      '01:30 PM',
-                      '02:00 PM',
-                      '02:30 PM',
-                      '03:00 PM',
-                      '03:30 PM',
-                      '04:00 PM',
-                      '04:30 PM',
-                      '05:00 PM',
-                      '05:30 PM',
-                      '06:00 PM',
-                      '06:30 PM',
-                      '07:00 PM',
-                      '07:30 PM',
-                      '08:00 PM',
-                    ]"
+                    :items="times"
+                    item-text="time"
+                    item-value="val"
                     label="Time"
                     requiredInfo
                     :rules="[rules.requiredInfo]"
                     prepend-icon="mdi-clock-time-eight-outline"
                   ></v-autocomplete>
-                  <!-- </v-form> -->
                 </v-col>
                 <!-- </v-col> -->
 
@@ -139,7 +111,6 @@
 
                 <!-- party size -->
                 <v-col cols="12" sm="6" md="6">
-                  <!-- <v-form ref="reserveForm" v-model="validFrom" lazy-validation> -->
                   <v-select
                     ref="sizeForm"
                     v-model="size"
@@ -150,7 +121,6 @@
                     :rules="[rules.requiredInfo]"
                     prepend-icon="mdi-account-group"
                   ></v-select>
-                  <!-- </v-form> -->
                 </v-col>
 
                 <!-- Email -->
@@ -168,9 +138,9 @@
 
                 <!-- Special Requests -->
                 <v-col cols="12" sm="12" md="12">
-                  <v-form ref="reqForm" v-model="validFrom" lazy-validation>
+                  <v-form ref="reqForm" v-model="validForm" lazy-validation>
                     <v-text-field
-                      v-model="reserveDetails.specialRequests"
+                      v-model="specialReq"
                       label="Special requests"
                       prepend-icon="mdi-email-newsletter"
                       clearable
@@ -206,7 +176,6 @@
       </v-card>
     </v-dialog>
     <Login />
-    />
   </div>
 </template>
 
@@ -215,7 +184,7 @@ import { mapGetters, mapActions } from "vuex";
 export default {
   data() {
     return {
-      validFrom: true,
+      validForm: true,
       loading: false,
       menu: false,
       dialogConfirm: false,
@@ -229,6 +198,7 @@ export default {
       time: "",
       size: "",
       datersv: "",
+      specialReq: "",
     };
   },
   components: {
@@ -236,11 +206,14 @@ export default {
     Login: () => import("../LoginPage/Login"),
   },
   mounted() {
+    console.log(this.reserveDetails);
     this.time = this.reserveDetails.time;
-    this.size = this.reserveDetails.partySize;
+    this.size = this.reserveDetails.size;
+    console.log(this.time);
+    console.log(this.date);
     this.datersv = this.date;
 
-    let totalTime = 300;
+    let totalTime = 300; // 5min
     if (totalTime > 0) {
       setInterval(() => {
         this.minutes = "0" + Math.floor(totalTime / 60).toFixed(0);
@@ -258,22 +231,44 @@ export default {
     dialog: Boolean,
     date: String,
     reserveDetails: Object,
-    resetForm: Function,
     allowedDates: Function,
+    times: Array,
   },
   computed: {
     ...mapGetters("account", ["getInfoUser"]),
   },
   methods: {
     ...mapActions("account", ["setDialogLogin"]),
+    ...mapActions("reserve", ["addRsv"]),
     async reserveLoading() {
       this.loading = true;
       await new Promise((res) => {
-        setTimeout(() => [res(), (this.loading = false), this.save()], 3000);
+        setTimeout(() => [res(), (this.loading = false), this.save()], 2000);
       });
     },
-    save() {
+    async save() {
       console.log("Confirm Reservation Already!");
+      this.reserveDetails.date = {
+        year: this.datersv.substring(0, 4),
+        month: this.datersv.substring(5, 7),
+        day: this.datersv.substring(8),
+      };
+      let date_time = new Date(
+        this.reserveDetails.date.year,
+        this.reserveDetails.date.month - 1,
+        this.reserveDetails.date.day,
+        this.time.h,
+        this.time.m,
+        0
+      ).getTime();
+      console.log(date_time);
+      let newReserve = {
+        dt: date_time,
+        size: this.size,
+        req: this.specialReq,
+      };
+      console.log(newReserve);
+      await this.addRsv(newReserve);
     },
     async validateForm() {
       if (this.$refs.reserveForm.validate()) {

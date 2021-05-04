@@ -54,9 +54,9 @@
           </v-list-item>
 
           <div>
-            <router-link to="/" class="text-dec" @click="logout()">
+            <a class="text-dec" @click="logout">
               <v-icon class="logOut" style="font-size: 3rem">$logOut</v-icon>
-            </router-link>
+            </a>
           </div>
         </v-list-item-group>
       </v-list>
@@ -101,7 +101,7 @@ export default {
 
 <style lang="scss" scoped>
 .logOut {
-  margin-top: 50vh;
+  margin-top: 56vh;
   margin-left: 85px;
   border-radius: 50%;
   padding: 15px;

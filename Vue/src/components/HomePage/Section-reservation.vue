@@ -11,13 +11,22 @@
       <div class="above-table">
         <div class="calendar"></div>
         <div class="book-table">
-          <ReservationHome></ReservationHome>
+          <ReservationHome
+            :getIsAdmin="getIsAdmin"
+            :getIsLogin="getIsLogin"
+            :setInvalidSnb="setInvalidSnb"
+          ></ReservationHome>
         </div>
       </div>
 
       <div class="buttom-table">
         <a @click="checkIsLogin">
-          <span class="check-reserve">
+          <span v-if="getIsAdmin" class="check-reserve">
+            Check information of reservation&nbsp;
+            <div id="line-append"></div>
+            <ArrowSVG />
+          </span>
+          <span v-else class="check-reserve">
             Check your reservation&nbsp;
             <div id="line-append"></div>
             <ArrowSVG />
@@ -29,14 +38,17 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 export default {
   components: {
     ReservationHome: () => import("./ReservationHome"),
     ArrowSVG: () => import("../JubJibComponent/ArrowSVG"),
   },
   methods: {
-    ...mapActions("account", ["checkIsLogin"]),
+    ...mapActions("account", ["checkIsLogin", "setInvalidSnb"]),
+  },
+  computed: {
+    ...mapGetters("account", ["getIsAdmin", "getIsLogin"]),
   },
 };
 </script>

@@ -1,7 +1,7 @@
 <template>
   <v-data-table
     :headers="headers"
-    :items="infoDetails"
+    :items="allReserve"
     :search="search"
     item-key="id"
     class="elevation-1"
@@ -20,36 +20,40 @@
         ></v-text-field>
         <v-divider class="mx-4" inset vertical></v-divider>
         <!-- Add Reservation -->
-        <v-btn
-          color="primary"
-          dark
-          class="mb-2"
-          @click="dialogAdd = !dialogAdd"
-          @closeDialogAdd="dialogAdd = !dialogAdd"
-        >
+        <v-btn color="primary" dark class="mb-2" @click="dialogAdd = true">
           Add
         </v-btn>
         <AddDialog
-          :infoDetails="infoDetails"
           v-if="dialogAdd"
+          :setDialogLogin="setDialogLogin"
+          :getInfoUser="getInfoUser"
           :dialogAddReserve="dialogAdd"
-          @closeDialogAdd="dialogAdd = !dialogAdd"
+          :addRsv="addRsv"
+          @closeDialogAdd="dialogAdd = false"
         />
       </v-toolbar>
     </template>
 
     <!-- Contents -->
-    <template v-slot:body="{ items }" v-if="infoDetails.length > 0">
+    <template v-slot:body="{ items }" v-if="allReserve">
       <tbody>
         <tr v-for="(item, i) in items" :key="i">
           <td>{{ item.id }}</td>
-          <td>{{ dateString(i) }}</td>
-          <td>{{ item.time }}</td>
-          <td>{{ nameUser(item) }}</td>
+          <td>{{ item.dateTime.substring(0, 10) }}</td>
+          <td>{{ item.dateTime.substring(10, 16) }}</td>
+          <td>
+            {{ item.firstName + " " + item.lastName }}
+          </td>
 
           <td>
-            <!-- Dialog More -->
-            <MoreDialogUser :i="i" :item="item" />
+            <MoreDialogUser
+              :i="i"
+              :item="item"
+              :confirmPassword="confirmPassword"
+              :getMatch="getMatch"
+              :setMatch="setMatch"
+              :editRsv="editRsv"
+            />
           </td>
 
           <td>
@@ -57,7 +61,7 @@
           </td>
 
           <td>
-            <DeleteDialog :i="i" :item="item" :infoDetails="infoDetails" />
+            <DeleteDialog :i="i" :item="item" :approveRsv="approveRsv" />
           </td>
         </tr>
       </tbody>
@@ -69,6 +73,7 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex";
 export default {
   data() {
     return {
@@ -78,7 +83,10 @@ export default {
   },
   props: {
     headers: Array,
-    infoDetails: Array,
+    allReserve: Array,
+  },
+  computed: {
+    ...mapGetters("account", ["getMatch", "getInfoUser"]),
   },
   components: {
     AddDialog: () => import("../AllDialogs/AddDialog"),
@@ -86,51 +94,8 @@ export default {
     MoreDialogUser: () => import("../AllDialogs/MoreDialogUser"),
   },
   methods: {
-    dateString(i) {
-      if (
-        this.infoDetails[i].date.month < 10 &&
-        this.infoDetails[i].date.day < 10
-      ) {
-        return (
-          this.infoDetails[i].date.year +
-          "-" +
-          "0" +
-          this.infoDetails[i].date.month +
-          "-" +
-          "0" +
-          this.infoDetails[i].date.day
-        );
-      } else if (this.infoDetails[i].date.month < 10) {
-        return (
-          this.infoDetails[i].date.year +
-          "-" +
-          "0" +
-          this.infoDetails[i].date.month +
-          "-" +
-          this.infoDetails[i].date.day
-        );
-      } else if (this.infoDetails[i].date.day < 10) {
-        return (
-          this.infoDetails[i].date.year +
-          "-" +
-          this.infoDetails[i].date.month +
-          "-" +
-          "0" +
-          this.infoDetails[i].date.day
-        );
-      } else {
-        return (
-          this.infoDetails[i].date.year +
-          "-" +
-          this.infoDetails[i].date.month +
-          "-" +
-          this.infoDetails[i].date.day
-        );
-      }
-    },
-    nameUser(item) {
-      return item.detail.firstName + " " + item.detail.lastName;
-    },
+    ...mapActions("account", ["confirmPassword", "setMatch", "setDialogLogin"]),
+    ...mapActions("reserve", ["editRsv", "approveRsv", "addRsv"]),
   },
 };
 </script>

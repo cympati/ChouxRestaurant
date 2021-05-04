@@ -10,4 +10,11 @@ public class ConfirmPasswordDTO {
     public void setConfirmPasswd(String confirmPasswd) {
         this.confirmPasswd = confirmPasswd;
     }
+
+    @Override
+    public String toString() {
+        return "ConfirmPasswordDTO{" +
+                "confirmPasswd='" + confirmPasswd + '\'' +
+                '}';
+    }
 }

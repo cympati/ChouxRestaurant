@@ -7,7 +7,7 @@
       <v-card>
         <VCardTitle :cardTitle="cardTitle" />
         <v-divider></v-divider>
-        <v-card-text>
+        <v-card-text class="pb-0 pt-5">
           <v-container>
             <v-row>
               <v-col cols="12" sm="6" md="6">
@@ -17,13 +17,13 @@
                   readonly
                   requiredInfo
                   :rules="[rules.requiredInfo]"
-                  v-model="item.detail.firstName"
+                  v-model="item.firstName"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" sm="6" md="6">
                 <v-text-field
                   label="Lastname"
-                  v-model="item.detail.lastName"
+                  v-model="item.lastName"
                   required
                   readonly
                   requiredInfo
@@ -37,7 +37,7 @@
                   readonly
                   requiredInfo
                   :rules="[rules.requiredInfo]"
-                  v-model="item.detail.phoneNumber"
+                  v-model="item.phone"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" sm="6" md="6">
@@ -45,10 +45,10 @@
                   :items="[1, 2, 3, 4, 5, 6]"
                   label="Party size"
                   required
-                  clearable
+                  readonly
                   requiredInfo
                   :rules="[rules.requiredInfo]"
-                  v-model="item.detail.partySize"
+                  v-model="item.size"
                 ></v-select>
               </v-col>
 
@@ -59,21 +59,25 @@
                   readonly
                   requiredInfo
                   :rules="[rules.requiredInfo]"
-                  v-model="item.detail.email"
+                  v-model="item.email"
                 ></v-text-field>
               </v-col>
 
               <v-col cols="12" sm="12" md="12">
-                <v-text-field
-                  label="Special requests"
-                  v-model="item.detail.specialRequests"
-                ></v-text-field>
+                <v-textarea
+                  ref="specialForm"
+                  outlined
+                  name="Special request"
+                  label="Special request"
+                  :value="item.specialReq"
+                  v-model="specialReq"
+                ></v-textarea>
               </v-col>
             </v-row>
             <small style="color: #212123"
               >*You can edit only
               <span style="color: #9f4c38">special requests</span> in here, but
-              you can edit the other in
+              you can edit the others in
               <router-link to="/setting" style="text-decoration: none"
                 ><span style="color: #9f4c38">setting</span></router-link
               >
@@ -94,15 +98,19 @@
             <!-- :dialogMore="dialogMore" -->
             <ConfirmDialogMore
               :dialogConfirm="dialogConfirm"
-              @changeDialogConfirm="dialogConfirm = false"
+              :checkConfirmPassword="confirmPassword"
+              :getMatch="getMatch"
+              :setMatch="setMatch"
+              :rules="rules"
+              @close="dialogConfirm = false"
               @changeInfo="changeInfo"
             />
             <!-- @changeDialogMore="dialogMore = null" -->
-            <ValidSnackbar
+            <!-- <ValidSnackbar
               :valid="snackbarConfirmPasswordValid"
               :textValid="notificationTextConfirmPasswordValid"
               @changeValid="snackbarConfirmPasswordValid = false"
-            />
+            /> -->
           </div>
         </v-card-actions>
       </v-card>
@@ -116,32 +124,42 @@ export default {
     return {
       dialogConfirm: false,
       dialogMore: null,
+      cardTitle: "More details",
+      specialReq: "",
       rules: {
         requiredInfo: (value) => !!value || "Required",
         min: (v) => (v && v.length >= 8) || "Min 8 characters",
       },
-      cardTitle: "More details",
-      snackbarConfirmPasswordValid: false,
-      notificationTextConfirmPasswordValid: "Your changes are saved",
     };
   },
   props: {
     i: Number,
     item: Object,
+    confirmPassword: Function,
+    getMatch: Boolean,
+    setMatch: Function,
+    editRsv: Function,
   },
   components: {
     ConfirmDialogMore: () =>
       import("@/components/AllDialogs/ConfirmDialogMore"),
     VCardTitle: () => import("../JubJibComponent/VCardTitle"),
-    ValidSnackbar: () => import("../Snackbars/ValidSnackbar"),
+    // ValidSnackbar: () => import("../Snackbars/ValidSnackbar"),
   },
   methods: {
     changeInfo() {
-      this.snackbarConfirmPasswordValid = true;
-      // change information (Backend)
+      let info = {
+        id: this.item.id,
+        special: this.specialReq,
+      };
+      this.editRsv(info);
+      // this.editRsv(info);
+      // console.log(info);
+      // change special req
     },
   },
   mounted() {
+    this.specialReq = this.item.specialReq;
     // this.infoDetail = this.item;
     // console.log(this.infoDetail);
   },

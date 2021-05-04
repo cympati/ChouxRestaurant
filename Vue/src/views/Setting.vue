@@ -28,65 +28,70 @@
                       persistent-hint
                       return-object
                       single-line
-                      style="width: 129px"
+                      style="width: 130.5px"
                       outlined
                       rounded
                       dense
                       color="black"
+                      @change="setColorSelect(colorSelect)"
                     ></v-select>
                   </div>
                 </div>
 
                 <div class="box-info">
                   <v-container>
-                    <v-row>
-                      <!-- firstname -->
-                      <v-col cols="12" sm="12" md="12">
-                        <h4>Firstname</h4>
-                        <v-text-field
-                          v-model="dataSelect.userInfo.firstName"
-                          :rules="[rules.required]"
-                          prepend-icon="mdi-account"
-                          required
-                          clearable
-                          maxlength="25"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="12" md="12">
-                        <h4>Lastname</h4>
-                        <v-text-field
-                          v-model="dataSelect.userInfo.lastName"
-                          :rules="[rules.required]"
-                          prepend-icon="mdi-account-multiple-outline"
-                          required
-                          clearable
-                          maxlength="25"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="12" md="12">
-                        <h4>Email Address</h4>
-                        <v-text-field
-                          v-model="dataSelect.userInfo.email"
-                          :rules="[rules.required]"
-                          prepend-icon="mdi-email"
-                          required
-                          clearable
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="12" md="12">
-                        <h4>Phone Number</h4>
-                        <!-- เปลี่ยน RegX phone number -->
-                        <v-text-field
-                          v-model="dataSelect.userInfo.phoneNumber"
-                          :rules="phoneNumberRules"
-                          prepend-icon="mdi-phone"
-                          required
-                          clearable
-                          maxlength="10"
-                          hint="0XXXXXXXXX"
-                        ></v-text-field>
-                      </v-col>
-                    </v-row>
+                    <v-form
+                      ref="infoUserForm"
+                      v-model="validForm"
+                      lazy-validation
+                    >
+                      <v-row>
+                        <v-col cols="12" sm="12" md="12">
+                          <h4>Firstname</h4>
+                          <v-text-field
+                            v-model="infoUser.firstName"
+                            :rules="[rules.required]"
+                            prepend-icon="mdi-account"
+                            required
+                            clearable
+                            maxlength="25"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="12" md="12">
+                          <h4>Lastname</h4>
+                          <v-text-field
+                            v-model="infoUser.lastName"
+                            :rules="[rules.required]"
+                            prepend-icon="mdi-account-multiple-outline"
+                            required
+                            clearable
+                            maxlength="25"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="12" md="12">
+                          <h4>Email Address</h4>
+                          <v-text-field
+                            v-model="infoUser.email"
+                            :rules="[rules.required]"
+                            prepend-icon="mdi-email"
+                            required
+                            clearable
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="12" md="12">
+                          <h4>Phone Number</h4>
+                          <v-text-field
+                            v-model="infoUser.phoneNumber"
+                            :rules="phoneNumberRules"
+                            prepend-icon="mdi-phone"
+                            required
+                            clearable
+                            maxlength="10"
+                            hint="0XXXXXXXXX"
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+                    </v-form>
                   </v-container>
                 </div>
               </div>
@@ -94,17 +99,34 @@
           </v-col>
           <v-divider class="my-9"></v-divider>
 
-          <v-col>
+          <v-col v-if="!getIsAdmin">
             <v-card class="pa-5">
               <v-card-title class="ml-3">Contact preference</v-card-title>
-              <ContactPreferenceContainer />
+              <ContactPreferenceContainer
+                :checkbox="checkbox"
+                @changeCheck="checkbox = !checkbox"
+              />
             </v-card>
           </v-col>
-          <v-divider class="my-9"></v-divider>
+          <v-divider class="my-9" v-if="!getIsAdmin"></v-divider>
           <v-col>
             <v-card class="pa-5">
               <v-card-title class="ml-3"> Change password </v-card-title>
-              <NewPasswdContainer :rules="rules" />
+              <v-card-text>
+                <v-container>
+                  <v-form
+                    ref="newPasswordForm"
+                    v-model="validNewPasswordFrom"
+                    lazy-validation
+                  >
+                    <NewPasswdContainer
+                      :rules="rules"
+                      :setNewPasswd="setNewPasswd"
+                      :setConfirmPasswd="setConfirmPasswd"
+                    />
+                  </v-form>
+                </v-container>
+              </v-card-text>
             </v-card>
           </v-col>
           <v-card-actions>
@@ -117,26 +139,35 @@
           </v-card-actions>
         </v-container>
       </v-card>
+      <div v-else>
+        <span
+          >You need to <a @click="setDialogLogin(true)">LOG IN</a> before</span
+        >
+      </div>
 
       <!-- Dialog Confirm -->
       <ConfirmDialog
         :dialogConfirm="dialogConfirm"
+        :setMatch="setMatch"
+        :getMatch="getMatch"
+        :rules="rules"
+        :checkConfirmPassword="confirmPassword"
         @changeDialogConfirm="dialogConfirm = false"
         @changeInfo="changeInfo"
-        @setColorBg="setColorSelect(colorSelect)"
       />
 
       <ValidSnackbar
-        :valid="snackbarConfirmPasswordValid"
-        :textValid="notificationTextConfirmPasswordValid"
-        @changeValid="snackbarConfirmPasswordValid = false"
+        :valid="getValidSnb.dialog"
+        :textValid="getValidSnb.text"
+        @closeDialog="setDialogSnbValid(false)"
+      />
+      <InvalidSnackbar
+        :invalid="getInvalidSnb.dialog"
+        :textInvalid="getInvalidSnb.text"
+        @closeDialog="setDialogSnbInvalid(false)"
       />
     </Layout>
-    <ValidSnackbar
-      :valid="comingSoonSnb"
-      :textValid="textComingSoon"
-      @changeValid="comingSoonSnb = false"
-    />
+    <Login />
   </div>
 </template>
 
@@ -145,33 +176,35 @@ import { mapGetters, mapActions } from "vuex";
 
 export default {
   components: {
+    Login: () => import("../components/LoginPage/Login"),
     Layout: () => import("../components/Navbars/Layout"),
     VNavLeft: () => import("../components/Navbars/VNavLeft"),
-    ValidSnackbar: () => import("../components/Snackbars/ValidSnackbar"),
-    ConfirmDialog: () => import("../components/AllDialogs/ConfirmDialogMore"),
+    ConfirmDialog: () =>
+      import("../components/AllDialogs/ConfirmDialogSetting"),
     NewPasswdContainer: () =>
       import("../components/SettingPage/NewPasswdContainer"),
     ContactPreferenceContainer: () =>
       import("../components/SettingPage/ContactPreferenceContainer"),
-    // ProfileDrawer: () => import("../components/ReservationPage/ProfileDrawer"),
+    ValidSnackbar: () => import("../components/Snackbars/ValidSnackbar"),
+    InvalidSnackbar: () => import("../components/Snackbars/InvalidSnackbar"),
   },
   data() {
     return {
       name: "Setting",
-      nameAvatar: "",
+      checkbox: false,
+      validForm: true,
       dialogConfirm: false,
-      comingSoonSnb: false,
-      textComingSoon: "COMING SOON!",
       multiLine: true,
+      validNewPasswordFrom: true,
       snackbarConfirmPasswordValid: false,
       notificationTextConfirmPasswordValid: "Your changes are saved",
       show: false,
-      colorSelect: [],
+      colorSelect: {},
       colors: [
         { color: "Brown", value: "brown" },
         { color: "Red", value: "red" },
-        { color: "Blue", value: "blue" },
-        { color: "Green", value: "Green" },
+        { color: "Purple", value: "purple" },
+        { color: "Green", value: "green" },
         { color: "Black", value: "black" },
       ],
       rules: {
@@ -182,68 +215,90 @@ export default {
         (v) => !!v || "Required",
         (v) => /^0\d{9}$/.test(v) || "Phone number must be valid",
       ],
-      infoUser: {},
-      dataSelect: {
-        userInfo: {
-          // User
-          firstName: "",
-          lastName: "",
-          id: "",
-          email: "",
-          password: "",
-          phoneNumber: "",
-          isAdmin: 0,
-        },
+      infoUser: {
+        firstName: "user",
+        lastName: "user",
+        id: "0",
+        email: "user",
+        phoneNumber: "0",
+        isAdmin: false,
       },
-      allUserData: [
-        {
-          userInfo: {
-            // User
-            firstName: "Patiphon",
-            lastName: "Klangpraphan",
-            id: "234",
-            email: "cympati@gmail.com",
-            password: "28052545",
-            phoneNumber: "0956600463",
-            isAdmin: 0,
-          },
-
-          allReserve: [
-            {
-              reserveId: "001",
-              date: {
-                year: "2002",
-                month: "5",
-                day: "28",
-              },
-              time: "11:00",
-              partySize: "2",
-              specialRequests: "Hungry so much!",
-              // 0 = pending or upcoming, 1 = come, 2 = not come, 3 = complete, 4 = cancel
-              status: 0,
-            },
-          ],
-        },
-      ],
     };
   },
 
   methods: {
-    changeInfo() {
-      this.snackbarConfirmPasswordValid = true;
-      // change information (Backend)
-      this.setColorSelect(this.colorSelect);
-    },
-    setColorSelect() {
-      this.setColorSelect(this.colorSelect);
+    ...mapActions("account", [
+      "setDialogSnbValid",
+      "setColorSelect",
+      "setDialogLogin",
+      "setMatch",
+      "confirmPassword",
+      "setDialogSnbInvalid",
+      "editPassword",
+      "editProfile",
+      "setInvalidSnb",
+      "setNewPasswd",
+      "setConfirmPasswd",
+    ]),
+    async changeInfo() {
+      const info = {
+        color: this.getColorSelect.color,
+        firstName: this.infoUser.firstName,
+        lastName: this.infoUser.lastName,
+        email: this.infoUser.email,
+        phone: this.infoUser.phoneNumber,
+        getReminders: this.checkbox ? 1 : 0,
+      };
+      console.log("Check changed Information");
+      if (
+        this.getNewPasswordForm.new === this.getNewPasswordForm.confirm &&
+        this.getNewPasswordForm.new !== "" &&
+        this.getNewPasswordForm.confirm !== "" &&
+        this.$refs.infoUserForm.validate()
+      ) {
+        console.log(this.getMatch);
+        console.log(this.getNewPasswordForm);
+        console.log("change information and new password");
+
+        console.log(info);
+        console.log(this.getNewPasswordForm.new);
+        // change information and new password (Backend)
+        await this.editPassword(this.getNewPasswordForm.new);
+        await this.editProfile(info);
+        // location.reload();
+      } else if (
+        (this.getNewPasswordForm.new !== this.getNewPasswordForm.confirm ||
+          this.getNewPasswordForm.new === "" ||
+          this.getNewPasswordForm.confirm === "") &&
+        this.$refs.infoUserForm.validate()
+      ) {
+        console.log(this.getMatch);
+        console.log(this.getNewPasswordForm);
+        console.log("change information only");
+
+        console.log(info);
+        // change information only
+        await this.editProfile(info);
+        // location.reload();
+      } else {
+        // getMatch === false
+        console.log(this.getMatch);
+        console.log(this.getNewPasswordForm);
+        let snackbar = {
+          dialog: true,
+          text: "Your information is required :(",
+        };
+        this.setInvalidSnb(snackbar);
+      }
     },
   },
   mounted() {
+    this.infoUser = this.getInfoUser.userDetail;
     this.colorSelect = this.getColorSelect.value;
+    this.checkbox = this.getGetReminders;
     // let id = this.$route.params.id;
     // let dataSelect = this.allUserData.find((el) => el.userInfo.id == id);
     // this.dataSelect = dataSelect;
-    this.infoUser = this.getInfoUser;
   },
   computed: {
     ...mapGetters("account", [
@@ -252,8 +307,12 @@ export default {
       "getIsLogin",
       "getInfoUser",
       "getTwoChar",
+      "getMatch",
+      "getNewPasswordForm",
+      "getInvalidSnb",
+      "getValidSnb",
+      "getIsAdmin",
     ]),
-    ...mapActions("account", ["setGetReminders", "setColorSelect()"]),
   },
 };
 </script>

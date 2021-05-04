@@ -21,8 +21,18 @@ public class Reserve {
     public Map<String, Object> _add(@CookieValue String token, @RequestBody AddReserveDTO info) {
         Map<String, Object> res = new HashMap<>();
         try {
-            String id_user = JwtUtil.parseToken(token);
 
+            long thirty_min = new java.util.Date().getTime() + 1800000; // now + 30
+            System.out.println(thirty_min);
+
+            if (info.getDate_time() <=  thirty_min ){
+                res.put("success", false);
+                res.put("text", "Unavailable time :(");
+                return res;
+            }
+            String id_user = JwtUtil.parseToken(token);
+            System.out.println(id_user);
+            System.out.println(info.toString());
             Connection conn = MySQLConnector.getConnection();
             PreparedStatement psmt_table = conn.prepareStatement("SELECT id_table FROM table_typ WHERE min <= ? AND max >= ?");
             psmt_table.setInt(1, info.getSize());
@@ -103,21 +113,20 @@ public class Reserve {
 
 
     @PatchMapping(path = "/approve")
-    public Map<String, Object> _cancel(@CookieValue String token, @RequestBody ApproveDTO info) {
+    public Map<String, Object> _cancel(@RequestBody ApproveDTO info) {
         // ถ้าปุ่มคอมพลีทให้เปลี่ยนสเตตัสโนเป็นเลขหนึ่ง
         // ถ้าปุ่มแคนเซิลให้เปลี่ยนสเตตัสโนเป็นเลขสอง
         // รับสเตตัสโนมาเช็ค 1 , 2
+        System.out.println("Approve");
         Map<String, Object> res = new HashMap<>();
         try {
-            String id_user = JwtUtil.parseToken(token);
             Connection conn = MySQLConnector.getConnection();
             int ok = 0;
 
             if (info.getStatus() == 1) { // Complete
                 PreparedStatement psmt_cp = conn.prepareStatement("UPDATE reservation SET status_rsv = 'complete' " +
-                        "WHERE id_user = ? AND id_rsv = ?");
-                psmt_cp.setInt(1, Integer.parseInt(id_user));
-                psmt_cp.setInt(2, info.getId_rsv());
+                        "WHERE id_rsv = ?");
+                psmt_cp.setInt(1, info.getId_rsv());
                 ok = psmt_cp.executeUpdate();
                 // Check it execute or not
                 if (ok >= 1) {
@@ -128,9 +137,8 @@ public class Reserve {
             }
             if (info.getStatus() == 2) { // Cancel
                 PreparedStatement psmt_cc = conn.prepareStatement("UPDATE reservation SET status_rsv = 'cancel' " +
-                        "WHERE id_user = ? AND id_rsv = ?");
-                psmt_cc.setInt(1, Integer.parseInt(id_user));
-                psmt_cc.setInt(2, info.getId_rsv());
+                        "WHERE id_rsv = ?");
+                psmt_cc.setInt(1, info.getId_rsv());
                 ok = psmt_cc.executeUpdate();
                 // Check it execute or not
                 if (ok >= 1) {
@@ -146,10 +154,6 @@ public class Reserve {
             e.printStackTrace();
             res.put("success", false);
             res.put("text", "Something wrong :(");
-        } catch (JwtException e) {
-            e.printStackTrace();
-            res.put("success", false);
-            res.put("text", "Token is incorrect :(");
         }
         return res;
     }
