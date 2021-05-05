@@ -47,6 +47,9 @@
                                   requiredInfo
                                   :rules="emailRules"
                                   v-model="email"
+                                  @keydown.enter="
+                                    validateVerificationPasswordForm()
+                                  "
                                 ></v-text-field>
                               </v-col>
                             </v-row>
@@ -59,7 +62,7 @@
                         <v-spacer></v-spacer>
                         <v-btn
                           color="primary"
-                          @click="validateEmailVertificationForm"
+                          @click="validateEmailVertificationForm()"
                           :disabled="!valid"
                         >
                           Continue

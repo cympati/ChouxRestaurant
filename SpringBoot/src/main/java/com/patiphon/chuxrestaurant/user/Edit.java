@@ -16,7 +16,6 @@ import java.util.Map;
 public class Edit {
     @PatchMapping(path = "/profile")
     public Map<String, Object> _profile(@CookieValue String token, @RequestBody EditProfileDTO info) {
-        System.out.println(info.toString());
         Map<String, Object> res = new HashMap<>();
         try {
             String id_user = JwtUtil.parseToken(token);
@@ -67,7 +66,6 @@ public class Edit {
 
     @PatchMapping(path = "/password")
     public Map<String, Object> _password(@CookieValue String token, @RequestBody EditPasswdDTO info) {
-        System.out.println(info.toString());
         Map<String, Object> res = new HashMap<>();
         try {
             String id_user = JwtUtil.parseToken(token);

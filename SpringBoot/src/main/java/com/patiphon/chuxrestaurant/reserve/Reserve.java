@@ -23,7 +23,6 @@ public class Reserve {
         try {
 
             long thirty_min = new java.util.Date().getTime() + 1800000; // now + 30
-            System.out.println(thirty_min);
 
             if (info.getDate_time() <= thirty_min) {
                 res.put("success", false);
@@ -31,8 +30,6 @@ public class Reserve {
                 return res;
             }
             String id_user = JwtUtil.parseToken(token);
-            System.out.println(id_user);
-            System.out.println(info.toString());
             Connection conn = MySQLConnector.getConnection();
             PreparedStatement psmt_table = conn.prepareStatement("SELECT id_table FROM table_typ WHERE min <= ? AND max >= ?");
             psmt_table.setInt(1, info.getSize());
@@ -60,7 +57,6 @@ public class Reserve {
                     ResultSet rs_rsv2 = psmt_rsv2.executeQuery();
 
                     if (rs_rsv2.next()) { // Not empty
-                        System.out.println(rs_rsv2.getString("id_table") + " not empty");
                         ok = false;
                     }
                 }
@@ -114,10 +110,7 @@ public class Reserve {
 
     @PatchMapping(path = "/approve")
     public Map<String, Object> _cancel(@RequestBody ApproveDTO info) {
-        // ถ้าปุ่มคอมพลีทให้เปลี่ยนสเตตัสโนเป็นเลขหนึ่ง
-        // ถ้าปุ่มแคนเซิลให้เปลี่ยนสเตตัสโนเป็นเลขสอง
-        // รับสเตตัสโนมาเช็ค 1 , 2
-        System.out.println("Approve");
+
         Map<String, Object> res = new HashMap<>();
         try {
             Connection conn = MySQLConnector.getConnection();

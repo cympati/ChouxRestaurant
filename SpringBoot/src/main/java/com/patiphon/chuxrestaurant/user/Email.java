@@ -31,11 +31,12 @@ public class Email {
             while (rs.next()) {
                 SimpleMailMessage msg = new SimpleMailMessage();
                 msg.setTo(rs.getString("email"));
+//                msg.setTo("chancreamz@gmail.com");
                 msg.setFrom("chuxreataurant@patiphon.cf");
                 msg.setSubject("Chuxrestaurant password reset token");
                 msg.setText("Reservation ID : " + rs.getInt("id_rsv"));
-//                javaMailSender.send(msg);
-                System.out.println("Reservation ID : " + rs.getInt("id_rsv")  + ", Email to " + rs.getString("email") + " has been sent");
+                javaMailSender.send(msg);
+//                System.out.println("Reservation ID : " + rs.getInt("id_rsv")  + ", Email to " + rs.getString("email") + " has been sent");
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();

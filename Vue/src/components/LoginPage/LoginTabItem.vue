@@ -7,7 +7,7 @@
           :rules="emailRules"
           prepend-icon="mdi-email"
           label="E-mail"
-          @keydown.enter="validateLogin"
+          @keydown.enter="$emit('validateLogin', loginInfo)"
           required
           class="my-0 py-0"
           height="28px"
@@ -25,7 +25,7 @@
           prepend-icon="mdi-lock"
           hint="At least 8 characters"
           counter
-          @keydown.enter="validateLogin"
+          @keydown.enter="$emit('validateLogin', loginInfo)"
           @click:append="show = !show"
           class="my-0 py-0"
           height="28px"

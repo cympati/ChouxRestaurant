@@ -48,7 +48,7 @@ public class Login {
                 res.put("text", "login successfully :)");
             } else {
                 res.put("isLogin", false);
-                res.put("text", "login fail :(");
+                res.put("text", "Login fail :(");
             }
         } catch (SQLException e) {
             res.put("success", false);

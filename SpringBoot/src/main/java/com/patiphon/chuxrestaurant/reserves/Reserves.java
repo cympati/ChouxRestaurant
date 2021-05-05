@@ -32,7 +32,6 @@ public class Reserves {
 
             // Check isAdmin
             if (rs_isAdmin.getBoolean("isAdmin")) { // This id_user is admin
-                System.out.println("ADMIN");
                 // Select all reservation in a week
 
                 PreparedStatement psmt = conn.prepareStatement("SELECT table_rsv.id_rsv, table_rsv.dt_start, reservation.special_req, reservation.status_rsv, reservation.size, user.first_name, user.last_name, user.phone_no, user.email FROM table_rsv " +
@@ -42,7 +41,6 @@ public class Reserves {
                 // >= now - 20 min && <= now + 7
                 Timestamp now = new Timestamp(new Date().getTime() + (20 * 60 * 1000)); // ms
                 Timestamp next = new Timestamp(new Date().getTime() + 604800000);
-//                System.out.println(now + "\n" + next);
                 psmt.setTimestamp(1, now);
                 psmt.setTimestamp(2, next);
                 ResultSet rs = psmt.executeQuery();
@@ -51,7 +49,6 @@ public class Reserves {
 
                 // Loop each row of database
                 while (rs.next()) {
-//                    System.out.println(rs.getString("dt_start"));
                     Map<String, Object> list = new HashMap<>();
                     list.put("id", rs.getInt("id_rsv"));
                     list.put("specialReq", rs.getString("special_req"));
@@ -82,7 +79,6 @@ public class Reserves {
 
             // USER
             // Select all reservation => id_use = id_use
-            System.out.println("USER");
             PreparedStatement psmt_rsv = conn.prepareStatement("SELECT table_rsv.id_rsv, table_rsv.dt_start, reservation.special_req, reservation.status_rsv, reservation.size, user.first_name, user.last_name, user.phone_no, user.email FROM table_rsv " +
                     "INNER JOIN reservation ON table_rsv.id_rsv = reservation.id_rsv " +
                     "INNER JOIN user ON reservation.id_user = user.id_user AND user.id_user = ?");

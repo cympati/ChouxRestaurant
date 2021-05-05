@@ -106,6 +106,7 @@ export default {
       "setDialogLogin",
       "loadDataFromLogin",
       "register",
+      "setDialogSnbInvalid",
     ]),
 
     // Reset form
