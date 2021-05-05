@@ -106,7 +106,6 @@ export default {
         { time: "07:30 PM", val: { h: "19", m: "30" } },
         { time: "08:00 PM", val: { h: "20", m: "00" } },
       ],
-
       reserveDetails: {
         date: {
           year: "",
@@ -135,12 +134,14 @@ export default {
       this.$refs.timeForm.reset();
       this.$refs.sizeForm.reset();
     },
+
     allowedDates(val) {
       let nowStr = moment().format().substring(0, 10);
       let now = new Date(nowStr).getTime();
       let date = new Date(val).getTime();
       return now <= date;
     },
+
     showAdmin() {
       let snackbar = {
         dialog: true,
@@ -148,6 +149,7 @@ export default {
       };
       this.setInvalidSnb(snackbar);
     },
+
     check() {
       if (this.getIsLogin) {
         this.dialogFindTable = !this.dialogFindTable;

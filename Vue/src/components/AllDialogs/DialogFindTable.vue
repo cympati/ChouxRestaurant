@@ -184,9 +184,13 @@ import { mapGetters, mapActions } from "vuex";
 export default {
   data() {
     return {
-      validForm: true,
-      loading: false,
+      time: "",
+      size: "",
+      datersv: "",
+      specialReq: "",
       menu: false,
+      loading: false,
+      validForm: true,
       dialogConfirm: false,
       rules: {
         requiredInfo: (value) => !!value || "Required",
@@ -195,10 +199,6 @@ export default {
       minutes: "05",
       second: "00",
       cardTitle: "Make a reservation",
-      time: "",
-      size: "",
-      datersv: "",
-      specialReq: "",
     };
   },
   components: {
@@ -206,11 +206,8 @@ export default {
     Login: () => import("../LoginPage/Login"),
   },
   mounted() {
-    console.log(this.reserveDetails);
     this.time = this.reserveDetails.time;
     this.size = this.reserveDetails.size;
-    console.log(this.time);
-    console.log(this.date);
     this.datersv = this.date;
 
     let totalTime = 300; // 5min
@@ -228,11 +225,11 @@ export default {
     }
   },
   props: {
-    dialog: Boolean,
-    date: String,
-    reserveDetails: Object,
-    allowedDates: Function,
     times: Array,
+    date: String,
+    dialog: Boolean,
+    allowedDates: Function,
+    reserveDetails: Object,
   },
   computed: {
     ...mapGetters("account", ["getInfoUser"]),
@@ -240,14 +237,15 @@ export default {
   methods: {
     ...mapActions("account", ["setDialogLogin"]),
     ...mapActions("reserve", ["addRsv"]),
+
     async reserveLoading() {
       this.loading = true;
       await new Promise((res) => {
         setTimeout(() => [res(), (this.loading = false), this.save()], 2000);
       });
     },
+
     async save() {
-      console.log("Confirm Reservation Already!");
       this.reserveDetails.date = {
         year: this.datersv.substring(0, 4),
         month: this.datersv.substring(5, 7),
@@ -261,15 +259,14 @@ export default {
         this.time.m,
         0
       ).getTime();
-      console.log(date_time);
       let newReserve = {
         dt: date_time,
         size: this.size,
         req: this.specialReq,
       };
-      console.log(newReserve);
       await this.addRsv(newReserve);
     },
+
     async validateForm() {
       if (this.$refs.reserveForm.validate()) {
         await this.reserveLoading();
@@ -282,6 +279,7 @@ export default {
         this.$emit("closeDialogFindATable");
       }
     },
+
     goToLogin() {
       this.setDialogLogin(true);
       this.$emit("closeDialogFindATable");
@@ -289,6 +287,3 @@ export default {
   },
 };
 </script>
-
-<style>
-</style>

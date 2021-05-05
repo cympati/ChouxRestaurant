@@ -79,9 +79,6 @@ export default {
   components: {
     ForgotPassword: () => import("./ForgotPassword"),
   },
-  methods: {
-    // ...mapActions("account", ["loadDataFromLogin"]),
-  },
 };
 </script>
 

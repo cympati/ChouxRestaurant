@@ -7,16 +7,9 @@
 
 <script>
 export default {
-  data() {
-    return {};
-  },
-  mounted() {},
   props: {
     pd: String,
     cardTitle: String,
   },
 };
 </script>
-
-<style>
-</style>

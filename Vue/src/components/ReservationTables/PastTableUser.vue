@@ -15,7 +15,7 @@
     </template>
 
     <!-- Contents -->
-    <template v-slot:body="{ items }" v-if="allReserve">
+    <template v-slot:body="{ items }" v-if="allReserve.length != 0">
       <tbody>
         <tr v-for="(item, i) in items" :key="i">
           <td>{{ item.id }}</td>
@@ -25,7 +25,6 @@
             {{ item.firstName + " " + item.lastName }}
           </td>
 
-          <!-- More info -->
           <td>
             <!-- Dialog More -->
             <MoreDialogAdmin :i="i" :item="item" />
@@ -69,5 +68,3 @@ export default {
 };
 </script>
 
-<style>
-</style>

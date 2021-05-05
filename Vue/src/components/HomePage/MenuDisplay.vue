@@ -85,7 +85,6 @@ export default {
   transition: 0.5s;
   overflow: hidden;
   &:hover {
-    // border-radius: 0 80px 0 80px;
     transform: scale(1.1, 1.1);
     .hover-img {
       opacity: 0.7;

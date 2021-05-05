@@ -1,7 +1,6 @@
 import Vue from "vue";
 import router from "../../../router";
 import axios from "../../../axios/axios";
-// import qs from "qs";
 
 export const setUserDetail = (app, value) => {
   app.commit("SET_USERDETAIL", value);
@@ -18,7 +17,6 @@ export const setMatch = (app, value) => {
 };
 
 export const setGetReminders = (app, value) => {
-  console.log(value);
   app.commit("SET_GETREMINDERS", value);
 };
 
@@ -81,7 +79,6 @@ export const loadDataFromLogin = async ({ commit }, loginInfo) => {
         commit("SET_USERDETAIL", {});
       }
       if (response.data.isLogin) {
-        console.log(response.data);
         commit("SET_ISLOGIN", response.data.isLogin);
         commit("SET_USERDETAIL", response.data.userDetail);
         commit("SET_COLORSELECT", response.data.bgColor);
@@ -112,7 +109,6 @@ export const register = async ({ dispatch, commit }, newUserForm) => {
     })
     .then((response) => {
       if (response.data.isLogin) {
-        console.log(newUserForm);
         const loginInfo = {
           email: newUserForm.em,
           password: newUserForm.passwd,
@@ -136,8 +132,6 @@ export const forgot = ({ commit }, email) => {
     .then((response) => {
       if (response.data.success) {
         commit("SET_RESETID", response.data.id_reset);
-        console.log(response.data.text);
-        // chancreamz@gmail.com
       } else {
         console.log(response.data.text);
       }
@@ -177,8 +171,18 @@ export const loadDataFromToken = async ({ commit }) => {
         commit("SET_USERDETAIL", response.data.userDetail);
         commit("SET_COLORSELECT", response.data.bgColor);
         commit("SET_GETREMINDERS", response.data.getRmd);
+      } else if (!response.data.isLogin) {
+        let snackbar = {
+          dialog: true,
+          text: "Load data fail",
+        };
+        commit("SET_INVALIDSNB", snackbar);
       } else {
-        console.log("What happend(?)");
+        let snackbar = {
+          dialog: true,
+          text: response.data.text,
+        };
+        commit("SET_INVALIDSNB", snackbar);
       }
     },
     (error) => console.log("Something Wrong :(", error)
@@ -187,16 +191,13 @@ export const loadDataFromToken = async ({ commit }) => {
 
 //Logout
 export const logout = ({ commit }) => {
-  console.log(1);
   Vue.$cookies.remove("token");
 
   if (!Vue.$cookies.get("token")) {
     commit("SET_ISLOGIN", false);
     commit("SET_USERDETAIL", {});
     window.location.href = "/";
-    console.log(2);
   } else {
-    console.log(3);
     let snackbar = {
       dialog: true,
       text: "Logout fail",
@@ -253,7 +254,6 @@ export const editPassword = async ({ commit }, newPassword) => {
 
 // Confirm password
 export const confirmPassword = async ({ commit }, confirmPassword) => {
-  console.log(confirmPassword);
   await axios
     .patch("/confirm/password", {
       confirmPasswd: confirmPassword,

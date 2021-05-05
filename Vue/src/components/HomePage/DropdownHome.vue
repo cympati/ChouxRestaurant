@@ -32,7 +32,6 @@
           >
             <v-list-item-title>{{ item.title }}</v-list-item-title>
           </router-link>
-          <!-- $store.dispatch('setLoginStatus', false) -->
           <div v-else-if="item.title === 'Logout'" @click="logout()">
             <router-link to="/" class="text-dec">
               <v-divider class="width-line"></v-divider>

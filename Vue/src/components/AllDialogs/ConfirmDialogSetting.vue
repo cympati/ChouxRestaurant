@@ -72,15 +72,11 @@ export default {
         this.$refs.confirmPasswordForm.reset();
         this.$refs.confirmPasswordForm.resetValidation();
         this.$emit("changeInfo");
-        console.log("Successfully :)");
         this.$emit("changeDialogConfirm");
       } else {
-        console.log("Your confirm password must match :(");
+        //
       }
     },
   },
 };
 </script>
-
-<style>
-</style>

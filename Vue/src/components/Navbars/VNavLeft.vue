@@ -38,10 +38,7 @@
               >
             </div>
           </v-list-item>
-          <!-- :to="{
-              name: 'Setting',
-              params: { id: dataDetail.id },
-            }" -->
+
           <v-list-item class="mt-3" to="/setting">
             <div class="d-flex justify-space-between">
               <v-icon class="text-decoration-none mr-3">$setting</v-icon>
@@ -79,18 +76,6 @@ export default {
         password: "28052545",
         phoneNumber: "0956600463",
       },
-      // pages: [
-      //   {
-      //     namePage: "Reservation",
-      //     to: "/reservation",
-      //     icon: "$reservation",
-      //   },
-      //   {
-      //     namePage: "Setting",
-      //     to: `/setting/${this.dataDetail.id}`,
-      //     icon: "$setting",
-      //   },
-      // ],
     };
   },
   methods: {

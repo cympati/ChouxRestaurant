@@ -164,12 +164,6 @@
           </v-container>
         </v-card-text>
       </v-card>
-
-      <!-- <InvalidSnackbar
-        :invalid="getInvalidSnb.dialog"
-        :textInvalid="getInvalidSnb.text"
-        @closeDialog="setDialogSnbInvalid(false)"
-      /> -->
     </v-dialog>
   </div>
 </template>
@@ -206,7 +200,6 @@ export default {
     };
   },
   components: {
-    // InvalidSnackbar: () => import("../Snackbars/InvalidSnackbar"),
     VCardTitle: () => import("../JubJibComponent/VCardTitle"),
   },
   props: {
@@ -250,7 +243,6 @@ export default {
     },
     async validateVerificationPasswordForm() {
       if (this.$refs.verificationPasswordForm.validate()) {
-        console.log("Reset Password");
         await axios
           .patch("/auth/reset", {
             id_reset: this.getResetId,
@@ -262,7 +254,6 @@ export default {
               dialog: true,
               text: response.data.text,
             };
-            console.log(response.data.success);
             if (response.data.success) {
               this.resetEmailForm();
               this.resetPassForm();

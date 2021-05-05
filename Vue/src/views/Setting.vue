@@ -279,7 +279,6 @@ export default {
         console.log(info);
         // change information only
         await this.editProfile(info);
-        // location.reload();
       } else {
         // getMatch === false
         console.log(this.getMatch);
@@ -296,9 +295,6 @@ export default {
     this.infoUser = this.getInfoUser.userDetail;
     this.colorSelect = this.getColorSelect.value;
     this.checkbox = this.getGetReminders;
-    // let id = this.$route.params.id;
-    // let dataSelect = this.allUserData.find((el) => el.userInfo.id == id);
-    // this.dataSelect = dataSelect;
   },
   computed: {
     ...mapGetters("account", [

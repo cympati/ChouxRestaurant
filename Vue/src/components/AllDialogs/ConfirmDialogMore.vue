@@ -57,7 +57,6 @@ export default {
     checkConfirmPassword: Function,
     setMatch: Function,
     getMatch: Boolean,
-
     dialogConfirm: Boolean,
     rules: Object,
   },
@@ -68,15 +67,11 @@ export default {
         this.$refs.confirmPasswordForm.reset();
         this.$refs.confirmPasswordForm.resetValidation();
         this.$emit("changeInfo");
-        console.log("Successfully :)");
         this.$emit("close");
       } else {
-        console.log("Your confirm password must match :(");
+        //
       }
     },
   },
 };
 </script>
-
-<style>
-</style>

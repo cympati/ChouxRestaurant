@@ -105,12 +105,6 @@
               @close="dialogConfirm = false"
               @changeInfo="changeInfo"
             />
-            <!-- @changeDialogMore="dialogMore = null" -->
-            <!-- <ValidSnackbar
-              :valid="snackbarConfirmPasswordValid"
-              :textValid="notificationTextConfirmPasswordValid"
-              @changeValid="snackbarConfirmPasswordValid = false"
-            /> -->
           </div>
         </v-card-actions>
       </v-card>
@@ -144,7 +138,6 @@ export default {
     ConfirmDialogMore: () =>
       import("@/components/AllDialogs/ConfirmDialogMore"),
     VCardTitle: () => import("../JubJibComponent/VCardTitle"),
-    // ValidSnackbar: () => import("../Snackbars/ValidSnackbar"),
   },
   methods: {
     changeInfo() {
@@ -152,19 +145,12 @@ export default {
         id: this.item.id,
         special: this.specialReq,
       };
-      this.editRsv(info);
-      // this.editRsv(info);
-      // console.log(info);
       // change special req
+      this.editRsv(info);
     },
   },
   mounted() {
     this.specialReq = this.item.specialReq;
-    // this.infoDetail = this.item;
-    // console.log(this.infoDetail);
   },
 };
 </script>
-
-<style>
-</style>

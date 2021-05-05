@@ -30,7 +30,6 @@ export default {
   name: "VNavAbove",
   data() {
     return {
-      // profileDrawer: null,
       dataDetail: {
         firstName: "Patiphon",
         lastName: "Klangpraphan",

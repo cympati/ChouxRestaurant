@@ -18,7 +18,7 @@
         <v-container>
           <v-form ref="reserveForm" v-model="validForm" lazy-validation>
             <v-row>
-              <!-- firstname -->
+              <!-- Firstname -->
               <v-col cols="12" sm="6" md="6">
                 <v-text-field
                   v-model="getInfoUser.userDetail.firstName"
@@ -32,7 +32,7 @@
                 ></v-text-field>
               </v-col>
 
-              <!-- lastname -->
+              <!-- Lastname -->
               <v-col cols="12" sm="6" md="6">
                 <v-text-field
                   v-model="getInfoUser.userDetail.lastName"
@@ -79,7 +79,7 @@
                 </v-menu>
               </v-col>
 
-              <!-- time -->
+              <!-- Time -->
               <v-col cols="12" sm="6" md="6">
                 <v-autocomplete
                   v-model="reserveDetails.time"
@@ -110,7 +110,7 @@
                 ></v-text-field>
               </v-col>
 
-              <!-- party size -->
+              <!-- Party size -->
               <v-col cols="12" sm="6" md="6">
                 <v-select
                   v-model="reserveDetails.size"
@@ -179,16 +179,18 @@
 export default {
   data() {
     return {
-      cardTitle: "Make a reservation",
-      loading: false,
       menu: false,
+      second: "00",
+      minutes: "05",
+      loading: false,
       validForm: true,
+      cardTitle: "Make a reservation",
+      date: new Date().toISOString().substr(0, 10),
+
       rules: {
         requiredInfo: (value) => !!value || "Required",
         min: (v) => (v && v.length >= 8) || "Min 8 characters",
       },
-      minutes: "05",
-      second: "00",
       times: [
         { time: "10:00 AM", val: { h: "10", m: "00" } },
         { time: "10:30 AM", val: { h: "10", m: "30" } },
@@ -212,7 +214,6 @@ export default {
         { time: "07:30 PM", val: { h: "19", m: "30" } },
         { time: "08:00 PM", val: { h: "20", m: "00" } },
       ],
-
       reserveDetails: {
         date: {
           year: "",
@@ -223,14 +224,13 @@ export default {
         size: "",
         specialReq: "",
       },
-      date: new Date().toISOString().substr(0, 10),
     };
   },
   props: {
-    dialogAddReserve: Boolean,
+    addRsv: Function,
     getInfoUser: Object,
     setDialogLogin: Function,
-    addRsv: Function,
+    dialogAddReserve: Boolean,
   },
   components: {
     VCardTitle: () => import("../JubJibComponent/VCardTitle"),
@@ -256,7 +256,6 @@ export default {
     },
 
     async save() {
-      console.log("Confirm Reservation Already!");
       this.reserveDetails.date = {
         year: this.date.substring(0, 4),
         month: this.date.substring(5, 7),
@@ -270,13 +269,11 @@ export default {
         this.reserveDetails.time.m,
         0
       ).getTime();
-      console.log(date_time);
       let newReserve = {
         dt: date_time,
         size: this.reserveDetails.size,
         req: this.reserveDetails.specialReq,
       };
-      console.log(newReserve);
       await this.addRsv(newReserve);
     },
   },
@@ -302,6 +299,3 @@ export default {
   },
 };
 </script>
-
-<style>
-</style>

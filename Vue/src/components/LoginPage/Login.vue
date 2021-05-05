@@ -89,15 +89,15 @@ export default {
       { name: "Register", icon: "mdi-account-outline" },
     ],
     emailRules: [
-      (v) => !!v || "Required",
+      (v) => !!v || "required",
       (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
     ],
     phoneNumberRules: [
-      (v) => !!v || "Required",
+      (v) => !!v || "required",
       (v) => /^0\d{9}$/.test(v) || "Phone number must be valid",
     ],
     rules: {
-      required: (value) => !!value || "Required.",
+      required: (value) => !!value || "required.",
       min: (v) => (v && v.length >= 8) || "Min 8 characters",
     },
   }),
