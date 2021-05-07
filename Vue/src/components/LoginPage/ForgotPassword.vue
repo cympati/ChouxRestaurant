@@ -212,6 +212,7 @@ export default {
       minutes: "05",
       second: "00",
       resend: false,
+      interval: null,
       emailRules: [
         (v) => !!v || "Required",
         (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
@@ -261,15 +262,15 @@ export default {
 
     timeCount() {
       this.resend = false;
-      let totalTime = 10; // 5min
+      let totalTime = 300; // 5min
       if (totalTime > 0) {
-        const interval = setInterval(() => {
+        this.interval = setInterval(() => {
           this.minutes = "0" + Math.floor(totalTime / 60).toFixed(0);
           totalTime -= 1;
           this.minutes = "0" + Math.floor(totalTime / 60).toFixed(0);
           this.second = ("0" + (totalTime % 60)).slice(-2);
           if (totalTime <= 0) {
-            clearInterval(interval);
+            clearInterval(this.interval);
             this.minutes = "05";
             this.second = "00";
             this.resend = true;
@@ -283,6 +284,9 @@ export default {
     },
     resetPassForm() {
       this.step = 1;
+      clearInterval(this.interval);
+      this.minutes = "05";
+      this.second = "00";
       this.$refs.verificationPasswordForm.reset();
       this.$refs.verificationPasswordForm.resetValidation();
     },

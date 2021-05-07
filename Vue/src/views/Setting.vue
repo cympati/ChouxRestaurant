@@ -249,19 +249,12 @@ export default {
         phone: this.infoUser.phoneNumber,
         getReminders: this.checkbox ? 1 : 0,
       };
-      console.log("Check changed Information");
       if (
         this.getNewPasswordForm.new === this.getNewPasswordForm.confirm &&
         this.getNewPasswordForm.new !== "" &&
         this.getNewPasswordForm.confirm !== "" &&
         this.$refs.infoUserForm.validate()
       ) {
-        console.log(this.getMatch);
-        console.log(this.getNewPasswordForm);
-        console.log("change information and new password");
-
-        console.log(info);
-        console.log(this.getNewPasswordForm.new);
         // change information and new password (Backend)
         await this.editPassword(this.getNewPasswordForm.new);
         await this.editProfile(info);
@@ -272,17 +265,10 @@ export default {
           this.getNewPasswordForm.confirm === "") &&
         this.$refs.infoUserForm.validate()
       ) {
-        console.log(this.getMatch);
-        console.log(this.getNewPasswordForm);
-        console.log("change information only");
-
-        console.log(info);
         // change information only
         await this.editProfile(info);
       } else {
         // getMatch === false
-        console.log(this.getMatch);
-        console.log(this.getNewPasswordForm);
         let snackbar = {
           dialog: true,
           text: "Your information is required :(",
@@ -292,7 +278,7 @@ export default {
     },
   },
   mounted() {
-    this.infoUser = this.getInfoUser.userDetail;
+    this.infoUser = { ...this.getInfoUser.userDetail };
     this.colorSelect = this.getColorSelect.value;
     this.checkbox = this.getGetReminders;
   },

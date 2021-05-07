@@ -145,29 +145,6 @@ export const forgot = async ({ commit }, email) => {
     .catch((error) => console.log(error));
 };
 
-// // Reset password
-// export const reset = ({ commit }, info) => {
-//   axios
-//     .patch("/auth/reset", {
-//       id_reset: info.id,
-//       new_passwd: info.new,
-//       verify: info.verify,
-//     })
-//     .then((response) => {
-//       const snackbar = {
-//         dialog: true,
-//         text: response.data.text,
-//       };
-//       if (response.data.success) {
-//         commit("SET_DIALOGLOGIN", false);
-//         commit("SET_VALIDSNB", snackbar);
-//       } else {
-//         commit("SET_INVALIDSNB", snackbar);
-//       }
-//     })
-//     .catch((error) => console.log(error));
-// };
-
 //load data from token
 export const loadDataFromToken = async ({ commit }) => {
   await axios.get(`/auth/load`).then(
