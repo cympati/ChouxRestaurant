@@ -29,14 +29,24 @@ public class ForgotPassword {
         try {
 
             Connection conn = MySQLConnector.getConnection();
+
+            PreparedStatement check_email = conn.prepareStatement("SELECT id_user FROM user WHERE email = ?");
+            check_email.setString(1,info.getEmail());
+            ResultSet rs_check_email = check_email.executeQuery();
+            if (!rs_check_email.next()){
+                res.put("success", false);
+                res.put("text", "Email is invalid :(");
+                return res;
+            }
+
             PreparedStatement pstm = conn.prepareStatement("INSERT INTO reset_passwd (verify_cd, expire_tm, id_user) " +
                     "SELECT ? as verify_cd, ? as expire_tm, id_user from user WHERE email = ?", Statement.RETURN_GENERATED_KEYS);
 
             // Random
-            String generatedString = RandomStringUtils.randomAlphanumeric(6);
+            String generatedString = RandomStringUtils.randomNumeric(6);
             pstm.setString(1, generatedString);
 
-            Timestamp expire_tm = new Timestamp(new java.util.Date().getTime() + (15 * 60 * 1000)); // 15 minutes
+            Timestamp expire_tm = new Timestamp(new java.util.Date().getTime() + (5 * 60 * 1000)); // 5 minutes
             pstm.setTimestamp(2, expire_tm);
             pstm.setString(3, info.getEmail());
             int rs = pstm.executeUpdate();
@@ -52,8 +62,8 @@ public class ForgotPassword {
                         msg.setFrom("chuxreataurant@patiphon.cf");
                         msg.setSubject("Chuxrestaurant password reset token");
                         msg.setText("Your verification code is " + generatedString);
-//                        System.out.println("Your verification code is " + generatedString + " send to " + info.getEmail());
-                            javaMailSender.send(msg);
+                        System.out.println("Your verification code is " + generatedString + " send to " + info.getEmail());
+//                            javaMailSender.send(msg);
                         res.put("success", true);
                         res.put("text", "Please check your email for verification code :)");
                         return res;

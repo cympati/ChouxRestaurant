@@ -43,7 +43,6 @@
                     :rules="[rules.requiredInfo]"
                   ></v-text-field>
                 </v-col>
-                <!-- <v-col cols="12" sm="12" md="12"> -->
                 <v-col cols="12" sm="6" md="6">
                   <v-menu
                     ref="menu"
@@ -149,7 +148,8 @@
                 </v-col>
               </v-row>
               <small style="color: #212123"
-                >*please, carefully check your details
+                >Please book at least 30 minutes in advance, and carefully check
+                your details
                 <a style="color: #9f4c38" @click="goToLogin"
                   >(not {{ getInfoUser.userDetail.firstName }}?)</a
                 ></small
@@ -194,6 +194,8 @@ export default {
       dialogConfirm: false,
       rules: {
         requiredInfo: (value) => !!value || "Required",
+        msgLength: (v) =>
+          v?.length <= 200 || "Your special request is too long",
         min: (v) => (v && v.length >= 8) || "Min 8 characters",
       },
       minutes: "05",

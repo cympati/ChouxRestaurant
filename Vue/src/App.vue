@@ -41,14 +41,9 @@ export default {
     if (Vue.$cookies.get("token")) {
       this.loadDataFromToken();
     } else {
-      let snackbar = {
-        dialog: true,
-        text: "Please login before",
-      };
-      this.setInvalidSnb(snackbar);
+      //
     }
   },
-  computed: {},
 };
 </script>
 

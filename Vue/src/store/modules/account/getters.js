@@ -32,3 +32,4 @@ export const getValidSnb = (state) => state.validSnb;
 export const getInvalidSnb = (state) => state.invalidSnb;
 
 export const getResetId = (state) => state.resetId;
+export const getEmailValid = (state) => state.emailValid;

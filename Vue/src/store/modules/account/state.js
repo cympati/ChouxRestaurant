@@ -28,4 +28,5 @@ export default {
     text: "null",
   },
   resetId: 0,
+  emailValid: false,
 };

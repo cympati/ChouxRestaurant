@@ -126,41 +126,47 @@ export const register = async ({ dispatch, commit }, newUserForm) => {
 };
 
 //forgotpassword
-export const forgot = ({ commit }, email) => {
-  axios
+export const forgot = async ({ commit }, email) => {
+  await axios
     .post("/auth/forgot", { email: email })
     .then((response) => {
       if (response.data.success) {
+        commit("SET_EMAILVALID", true);
         commit("SET_RESETID", response.data.id_reset);
       } else {
-        console.log(response.data.text);
+        let snackbar = {
+          dialog: true,
+          text: response.data.text,
+        };
+        commit("SET_INVALIDSNB", snackbar);
+        commit("SET_EMAILVALID", false);
       }
     })
     .catch((error) => console.log(error));
 };
 
-// Reset password
-export const reset = ({ commit }, info) => {
-  axios
-    .patch("/auth/reset", {
-      id_reset: info.id,
-      new_passwd: info.new,
-      verify: info.verify,
-    })
-    .then((response) => {
-      const snackbar = {
-        dialog: true,
-        text: response.data.text,
-      };
-      if (response.data.success) {
-        commit("SET_DIALOGLOGIN", false);
-        commit("SET_VALIDSNB", snackbar);
-      } else {
-        commit("SET_INVALIDSNB", snackbar);
-      }
-    })
-    .catch((error) => console.log(error));
-};
+// // Reset password
+// export const reset = ({ commit }, info) => {
+//   axios
+//     .patch("/auth/reset", {
+//       id_reset: info.id,
+//       new_passwd: info.new,
+//       verify: info.verify,
+//     })
+//     .then((response) => {
+//       const snackbar = {
+//         dialog: true,
+//         text: response.data.text,
+//       };
+//       if (response.data.success) {
+//         commit("SET_DIALOGLOGIN", false);
+//         commit("SET_VALIDSNB", snackbar);
+//       } else {
+//         commit("SET_INVALIDSNB", snackbar);
+//       }
+//     })
+//     .catch((error) => console.log(error));
+// };
 
 //load data from token
 export const loadDataFromToken = async ({ commit }) => {

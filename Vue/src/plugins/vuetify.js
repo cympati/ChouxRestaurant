@@ -22,6 +22,7 @@ export default new Vuetify({
       reservation: "mdi-calendar-today",
       setting: "mdi-cog",
       logOut: "mdi-logout-variant",
+      resend: "mdi-restart",
     },
   },
 });

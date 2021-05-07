@@ -1,8 +1,23 @@
 <template>
   <div>
     <v-dialog v-model="dialog" max-width="900px" min-width="500px" persistent>
-      <v-card>
-        <VCardTitle :pd="paddingTitle" :cardTitle="cardTitle" />
+      <v-card :loading="loading">
+        <template slot="progress">
+          <v-progress-linear
+            color="blue"
+            height="10"
+            indeterminate
+          ></v-progress-linear>
+        </template>
+        <VCardTitle :pd="paddingTitle" :cardTitle="cardTitle">
+          <v-spacer></v-spacer>
+          <small v-if="step > 1 && !resend">{{ minutes }}:{{ second }} </small>
+          <small class="font-weight-medium">
+            <a v-if="step > 1 && resend" @click="resendVerify"
+              >Resend <v-icon>$resend</v-icon></a
+            >
+          </small>
+        </VCardTitle>
 
         <v-card-text>
           <v-container>
@@ -178,7 +193,9 @@ export default {
   data() {
     return {
       email: "",
-      paddingTitle: "pl-9",
+      emailCone: "",
+      loading: false,
+      paddingTitle: "px-9 ",
       cardTitle: "Forgot Password",
       show: false,
       notificationTextInvalid: "Your verification code must be valid!",
@@ -192,6 +209,9 @@ export default {
       confirmNewPassword: "",
       newPassword: "",
       step: 1,
+      minutes: "05",
+      second: "00",
+      resend: false,
       emailRules: [
         (v) => !!v || "Required",
         (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
@@ -214,6 +234,7 @@ export default {
       "getInvalidSnb",
       "getInfoUser",
       "getResetId",
+      "getEmailValid",
     ]),
     newPasswordMatch() {
       return () =>
@@ -228,6 +249,34 @@ export default {
       "forgot",
       "reset",
     ]),
+    async reserveLoading() {
+      this.loading = true;
+      await new Promise((res) => {
+        setTimeout(
+          () => [res(), (this.loading = false), this.timeCount()],
+          2000
+        );
+      });
+    },
+
+    timeCount() {
+      this.resend = false;
+      let totalTime = 10; // 5min
+      if (totalTime > 0) {
+        const interval = setInterval(() => {
+          this.minutes = "0" + Math.floor(totalTime / 60).toFixed(0);
+          totalTime -= 1;
+          this.minutes = "0" + Math.floor(totalTime / 60).toFixed(0);
+          this.second = ("0" + (totalTime % 60)).slice(-2);
+          if (totalTime <= 0) {
+            clearInterval(interval);
+            this.minutes = "05";
+            this.second = "00";
+            this.resend = true;
+          }
+        }, 1000);
+      }
+    },
     resetEmailForm() {
       this.$refs.emailVerificationForm.reset();
       this.$refs.emailVerificationForm.resetValidation();
@@ -240,10 +289,17 @@ export default {
     async validateEmailVertificationForm() {
       if (this.$refs.emailVerificationForm.validate()) {
         await this.forgot(this.email);
-        this.step = 2;
-        this.resetEmailForm();
+        if (this.getEmailValid) {
+          await this.reserveLoading();
+          this.step = 2;
+          this.emailCone = this.email;
+          this.resetEmailForm();
+        }
+      } else {
+        //
       }
     },
+
     async validateVerificationPasswordForm() {
       if (this.$refs.verificationPasswordForm.validate()) {
         await axios
@@ -277,24 +333,12 @@ export default {
     backToLogin() {
       this.resetEmailForm(), this.$emit("closeDialog");
     },
-    checkVerificationCode() {
-      if (
-        this.yourVerifyCode == this.verificationCode &&
-        this.newPassword !== "" &&
-        this.confirmNewPassword !== ""
-      ) {
-        this.$emit("closeDialog");
-        this.setDialogLogin(false);
-        let snackbar = { text: "Your password is changed", dialog: true };
-        this.setSnackbar(snackbar);
-      } else if (
-        this.yourVerifyCode == this.verificationCode &&
-        this.newPassword == "" &&
-        this.confirmNewPassword == ""
-      ) {
-        this.snackbarPasswordInvalid = !this.snackbarPasswordInvalid;
+    async resendVerify() {
+      await this.forgot(this.emailCone);
+      if (this.getEmailValid) {
+        await this.reserveLoading();
       } else {
-        this.snackbarInvalid = !this.snackbarInvalid;
+        //
       }
     },
   },

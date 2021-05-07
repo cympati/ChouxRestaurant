@@ -26,7 +26,6 @@
                   prepend-icon="mdi-account"
                   readonly
                   required
-                  clearable
                   requiredInfo
                   :rules="[rules.requiredInfo]"
                 ></v-text-field>
@@ -38,7 +37,6 @@
                   v-model="getInfoUser.userDetail.lastName"
                   label="Lastname"
                   required
-                  clearable
                   requiredInfo
                   :rules="[rules.requiredInfo]"
                   readonly
@@ -104,7 +102,6 @@
                   prepend-icon="mdi-phone"
                   readonly
                   required
-                  clearable
                   requiredInfo
                   :rules="[rules.requiredInfo]"
                 ></v-text-field>
@@ -133,7 +130,6 @@
                   prepend-icon="mdi-email"
                   readonly
                   required
-                  clearable
                   requiredInfo
                   :rules="[rules.requiredInfo]"
                 ></v-text-field>
@@ -151,8 +147,10 @@
               </v-col>
             </v-row>
           </v-form>
+
           <small style="color: #212123"
-            >*please, carefully check your details
+            >Please book at least 30 minutes in advance, and carefully check
+            your details
             <a
               style="color: #9f4c38"
               @click="[setDialogLogin(true), $emit('closeDialogAdd')]"

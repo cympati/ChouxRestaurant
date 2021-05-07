@@ -51,3 +51,6 @@ export const SET_DIALOGSNBINVALID = (state, value) => {
 export const SET_RESETID = (state, value) => {
   state.resetId = value;
 };
+export const SET_EMAILVALID = (state, value) => {
+  state.emailValid = value;
+};
