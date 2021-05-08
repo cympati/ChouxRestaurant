@@ -72,6 +72,7 @@
                     no-title
                     color="blue"
                     width="300"
+                    :allowed-dates="allowedDates"
                   >
                   </v-date-picker>
                 </v-menu>
@@ -174,6 +175,7 @@
 </template>
 
 <script>
+import moment from "moment";
 export default {
   data() {
     return {
@@ -273,6 +275,13 @@ export default {
         req: this.reserveDetails.specialReq,
       };
       await this.addRsv(newReserve);
+    },
+
+    allowedDates(val) {
+      let nowStr = moment().format().substring(0, 10);
+      let now = new Date(nowStr).getTime();
+      let date = new Date(val).getTime();
+      return now <= date;
     },
   },
   mounted() {
