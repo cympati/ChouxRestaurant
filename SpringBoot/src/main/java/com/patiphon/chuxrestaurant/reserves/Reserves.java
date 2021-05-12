@@ -33,7 +33,6 @@ public class Reserves {
             // Check isAdmin
             if (rs_isAdmin.getBoolean("isAdmin")) { // This id_user is admin
                 // Select all reservation in a week
-
                 PreparedStatement psmt = conn.prepareStatement("SELECT table_rsv.id_rsv, table_rsv.dt_start, reservation.special_req, reservation.status_rsv, reservation.size, user.first_name, user.last_name, user.phone_no, user.email FROM table_rsv " +
                         "INNER JOIN reservation ON table_rsv.id_rsv = reservation.id_rsv " +
                         "INNER JOIN user ON reservation.id_user = user.id_user WHERE table_rsv.dt_start >= ? AND table_rsv.dt_start <= ?"); //
