@@ -27,9 +27,5 @@ public class MySQLConnector {
     private static void reconnect() throws SQLException {
         connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
     }
-
-    //    public static Connection getConnection() throws SQLException {
-//        return DriverManager.getConnection(URL, USERNAME, PASSWORD);
-//    }
 }
 
