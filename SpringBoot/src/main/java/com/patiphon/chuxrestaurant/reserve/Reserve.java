@@ -45,7 +45,7 @@ public class Reserve {
 
                 PreparedStatement psmt_rsv1 = conn.prepareStatement("SELECT id_table, id_rsv FROM table_rsv WHERE dt_start <= ? AND dt_start >= ? AND id_table = ?");
                 psmt_rsv1.setString(1, dateFormat.format(date1));
-                psmt_rsv1.setString(2, dateFormat.format(date2)); // now - 2 hours
+                psmt_rsv1.setString(2, dateFormat.format(date2)); // dt_reserve - 2 hours
                 psmt_rsv1.setInt(3, rs_table.getInt("id_table"));
                 ResultSet rs_rsv1 = psmt_rsv1.executeQuery();
 
