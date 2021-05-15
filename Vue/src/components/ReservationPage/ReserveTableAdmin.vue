@@ -23,7 +23,10 @@
       </template>
 
       <!-- Contents -->
-      <template v-slot:body="{ items }" v-if="allReserve.length != 0">
+      <template
+        v-slot:body="{ items }"
+        v-if="allReserve.length != 0 || allReserve"
+      >
         <tbody>
           <tr v-for="(item, i) in items" :key="i">
             <td>{{ item.id }}</td>

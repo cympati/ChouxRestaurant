@@ -42,7 +42,6 @@ public class Reserve {
                 Date date1 = new Date(info.getDate_time());
                 Date date2 = new Date(info.getDate_time() - 7200000);
 
-
                 PreparedStatement psmt_rsv1 = conn.prepareStatement("SELECT id_table, id_rsv FROM table_rsv WHERE dt_start <= ? AND dt_start >= ? AND id_table = ?");
                 psmt_rsv1.setString(1, dateFormat.format(date1));
                 psmt_rsv1.setString(2, dateFormat.format(date2)); // dt_reserve - 2 hours

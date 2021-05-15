@@ -252,6 +252,7 @@ export default {
         this.$refs.dateForm.reset();
         this.$refs.reserveForm.resetValidation();
         this.$emit("closeDialogAdd");
+        window.location.reload();
       }
     },
 
