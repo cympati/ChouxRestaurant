@@ -62,8 +62,8 @@ public class ForgotPassword {
                         msg.setFrom("chuxreataurant@patiphon.cf");
                         msg.setSubject("Chuxrestaurant password reset token");
                         msg.setText("Your verification code is " + generatedString);
-                        System.out.println("Your verification code is " + generatedString + " send to " + info.getEmail());
-//                            javaMailSender.send(msg);
+//                        System.out.println("Your verification code is " + generatedString + " send to " + info.getEmail());
+                            javaMailSender.send(msg);
                         res.put("success", true);
                         res.put("text", "Please check your email for verification code :)");
                         return res;

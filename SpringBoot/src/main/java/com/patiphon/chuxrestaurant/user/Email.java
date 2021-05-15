@@ -47,7 +47,7 @@ public class Email {
                 msg.setText("Your reservation/booking with Chuxrestaurant is scheduled on " + date + " at " + time + ". \nYour booking no. is " + rs.getInt("id_rsv"));
                 javaMailSender.send(msg);
 
-                System.out.println("Your reservation/booking with Chuxrestaurant is scheduled on " + date + " at " + time + ". \nYour booking no. is " + rs.getInt("id_rsv"));
+//                System.out.println("Your reservation/booking with Chuxrestaurant is scheduled on " + date + " at " + time + ". \nYour booking no. is " + rs.getInt("id_rsv"));
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
